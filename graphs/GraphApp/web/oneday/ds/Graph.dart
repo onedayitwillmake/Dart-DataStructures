@@ -1,4 +1,7 @@
-
+ /**
+ * A [Graph] is an abstract data-structure which consist of a set of Vertices V together with a set E of edges (vertex pairs)
+ * @author Mario Gonzalez | onedayitwillmake.com
+ */ 
 class Graph {
   
   List<EdgeNode> edges;       // adjancency info
@@ -7,10 +10,11 @@ class Graph {
   int numEdges = 0;           // number of edges in the graph
   bool directed;              // is the graph directed?
   
+ 
   /**
-   * A [Graph] is an abstract data-structure which consist of
-   * a set of Vertices V together with a set E of edges (vertex pairs)
-   */ 
+   * Creates a new [Graph] instance. 
+   * The graph can either be 'undirected' (two way) or 'directed' (one way)
+   */
   Graph( bool isDirected ) : directed = isDirected {
     num maxVerts = 1000;
     

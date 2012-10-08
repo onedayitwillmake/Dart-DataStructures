@@ -1,3 +1,8 @@
+/**
+ * An [EdgeNode] is a data-structure in a [Graph] which connects two nodes
+ * It is implemented here as a LinkedList
+ * @author Mario Gonzalez | onedayitwillmake.com
+ */
 class EdgeNode {
   num y = 0;          // adjency info
   int weight = 0;     // edge weight info

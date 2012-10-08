@@ -1,6 +1,7 @@
 
 /**
  * Provides a simple 2D Vector class
+ * @author Mario Gonzalez | onedayitwillmake.com
  */ 
 class Vec2 {
   num x;

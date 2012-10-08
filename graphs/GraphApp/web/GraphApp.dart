@@ -1,21 +1,19 @@
 #import('dart:html');
-#import('../oneday/ds/graph/EdgeNode.dart');
-#import('../oneday/ds/graph/Graph.dart');
+#import('oneday/ds/ds.dart');
+
 
 Graph aGraph;
+CanvasRenderingContext2D context;
 
 void main() { 
-  String graphText = '''
-  4
-  1,2
-  1,5
-  2,5
-  2,3
-  2,4
-  3,4
-  4,5  
-  ''';
+  CanvasElement canvas = query("#container");
+  context = canvas.context2d;
   
-  aGraph = new Graph.fromSimpleText( graphText );
+  // Load the sample data
+  var req = new HttpRequest.get("web/data/simpleGraph00.txt", onSuccess);
+}
+
+onSuccess( HttpRequest req ) {
+  aGraph = new Graph.fromSimpleText( req.responseText );
   print(aGraph);
 }

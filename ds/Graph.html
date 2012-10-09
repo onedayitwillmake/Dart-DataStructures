@@ -1,0 +1,213 @@
+        <!DOCTYPE html>
+        <html>
+        <head>
+                <meta charset="utf-8">
+        <title>Graph class / ds Library / Dart Documentation</title>
+        <link rel="stylesheet" type="text/css"
+            href="../styles.css">
+        <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800" rel="stylesheet" type="text/css">
+        <link rel="shortcut icon" href="../favicon.ico">
+        
+        </head>
+        <body data-library="ds" data-type="Graph">
+        <div class="page">
+        <div class="header">
+          <a href="../index.html"><div class="logo"></div></a>
+          <a href="../index.html">Dart Documentation</a>
+         &rsaquo; <a href="../ds.html">ds</a> &rsaquo; <a href="../ds/Graph.html">Graph</a>        <div id="search-box">
+          <input type="search" name="q" id="q" autocomplete="off"
+              class="search-input" placeholder="Search API">
+        </div>
+        
+      </div>
+      <div class="drop-down" id="drop-down"></div>
+      
+        <div class="nav">
+        
+<h2><div class="icon-library"></div><a href="../ds.html">ds</a></h2><ul class="icon">
+<li><a href="../ds/EdgeNode.html"><div class="icon-class"></div>EdgeNode</a></li>
+<li><div class="icon-class"></div><strong>Graph</strong></li>
+</ul>
+<h2><div class="icon-library"></div><a href="../geom.html">geom</a></h2><h2><div class="icon-library"></div><a href="../GraphApp.dart.html">GraphApp.dart</a></h2></div>
+<div class="content">
+        <h2><strong>Graph</strong>
+          class
+        </h2>
+        
+<div class="doc">
+<p>A <a class="crossref" href="../ds/Graph.html#Graph">Graph</a> is an abstract data-structure which consist of a set of Vertices V together with a set E of edges (vertex pairs)
+@author Mario Gonzalez | onedayitwillmake.com</p>
+</div>
+<h3>Constructors</h3>
+<div class="method"><h4 id="Graph.fromSimpleText">
+<span class="show-code">Code</span>
+factory <strong>Graph</strong>.fromSimpleText(<a href="http://api.dartlang.org/dart_core/String.html">String</a> graphText) <a class="anchor-link" href="#Graph.fromSimpleText"
+              title="Permalink to Graph.Graph">#</a></h4>
+<div class="doc">
+<p>Creates a <a class="crossref" href="../ds/Graph.html#Graph">Graph</a> from a text file such that each line contains an EdgeNode(a,b)</p>
+<pre class="source">
+factory Graph.fromSimpleText( String graphText ) {
+  Graph g = new Graph( false );
+  List&lt;String&gt; edgeInfo = graphText.split("\n");
+  
+  // First line should contain the number of vertices in the graph and nothing else
+  g.numVertices = parseInt( edgeInfo[0] );
+  edgeInfo.removeLast();  // \n is the last char in the file, remove
+  edgeInfo.removeAt(0);   // remove the first line which contains only numvertices property
+  
+  for( String pair in edgeInfo ) {
+    List&lt;String&gt; nodeInfo = pair.split(",");
+    g.insertEdge( parseInt(nodeInfo[0]), parseInt(nodeInfo[1]), false );
+  }
+  
+  return g;
+}
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="Graph">
+<span class="show-code">Code</span>
+new <strong>Graph</strong>(<a href="http://api.dartlang.org/dart_core/bool.html">bool</a> isDirected) <a class="anchor-link" href="#Graph"
+              title="Permalink to Graph.Graph">#</a></h4>
+<div class="doc">
+<p>Creates a new <a class="crossref" href="../ds/Graph.html#Graph">Graph</a> instance.
+The graph can either be 'undirected' (two way) or 'directed' (one way)</p>
+<pre class="source">
+Graph( bool isDirected ) : directed = isDirected {
+  num maxVerts = 1000;
+  
+  degree = new List&lt;num&gt;(maxVerts+1); 
+  edges = new List&lt;EdgeNode&gt;(maxVerts+1);
+  for(int i = 1; i &lt;= maxVerts; i++) {
+    degree[i] = 0;
+    edges[i] = null;
+  }
+}
+</pre>
+</div>
+</div>
+<h3>Methods</h3>
+<div class="method"><h4 id="insertEdge">
+<span class="show-code">Code</span>
+<strong>insertEdge</strong>(<a href="http://api.dartlang.org/dart_core/num.html">num</a> x, <a href="http://api.dartlang.org/dart_core/num.html">num</a> y, <a href="http://api.dartlang.org/dart_core/bool.html">bool</a> directed) <a class="anchor-link" href="#insertEdge"
+              title="Permalink to Graph.insertEdge">#</a></h4>
+<div class="doc">
+<p>Inserts an <a class="crossref" href="../ds/EdgeNode.html">EdgeNode</a> into the <a class="crossref" href="../ds/Graph.html#Graph">Graph</a></p>
+<pre class="source">
+insertEdge( num x, num y, bool directed ) {
+  EdgeNode p = new EdgeNode( y, 0 );
+  p.next = edges[x];
+  
+  edges[x] = p;
+  degree[x]++;
+  
+  // Insert in reverse if undirected
+  if( !directed ) {
+    insertEdge(y, x, true);
+  } else {
+    numEdges++;
+  }
+}
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="toString">
+<span class="show-code">Code</span>
+<a href="http://api.dartlang.org/dart_core/String.html">String</a> <strong>toString</strong>() <a class="anchor-link" href="#toString"
+              title="Permalink to Graph.toString">#</a></h4>
+<div class="doc">
+<p>Interates thru all the <a class="crossref" href="../ds/EdgeNode.html">EdgeNode</a>'s in [this] [Graph]</p>
+<pre class="source">
+String toString() {
+  StringBuffer output = new StringBuffer("");
+  for( int i = 1; i &lt;= numVertices; i++ ) {
+    output.add( i == 1 ? "" : "\n" ); // dont \n on first line
+    output.add( "${i}:" );
+    EdgeNode p = edges[i];
+    while( p != null ) {
+      output.add(" ${p.y}");
+      p = p.next;
+    }
+  }
+  
+  return output.toString();
+}
+</pre>
+</div>
+</div>
+<h3>Fields</h3>
+<div class="field"><h4 id="degree">
+<span class="show-code">Code</span>
+<a href="http://api.dartlang.org/dart_core/List.html">List</a>&lt;<a href="http://api.dartlang.org/dart_core/num.html">num</a>&gt;         <strong>degree</strong> <a class="anchor-link"
+            href="#degree"
+            title="Permalink to Graph.degree">#</a>
+        </h4>
+        <div class="doc">
+
+<pre class="source">
+List&lt;num&gt; degree;
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="directed">
+<span class="show-code">Code</span>
+<a href="http://api.dartlang.org/dart_core/bool.html">bool</a>         <strong>directed</strong> <a class="anchor-link"
+            href="#directed"
+            title="Permalink to Graph.directed">#</a>
+        </h4>
+        <div class="doc">
+
+<pre class="source">
+bool directed;
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="edges">
+<span class="show-code">Code</span>
+<a href="http://api.dartlang.org/dart_core/List.html">List</a>&lt;<a href="../ds/EdgeNode.html">EdgeNode</a>&gt;         <strong>edges</strong> <a class="anchor-link"
+            href="#edges"
+            title="Permalink to Graph.edges">#</a>
+        </h4>
+        <div class="doc">
+
+<pre class="source">
+List&lt;EdgeNode&gt; edges;
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="numEdges">
+<span class="show-code">Code</span>
+<a href="http://api.dartlang.org/dart_core/int.html">int</a>         <strong>numEdges</strong> <a class="anchor-link"
+            href="#numEdges"
+            title="Permalink to Graph.numEdges">#</a>
+        </h4>
+        <div class="doc">
+
+<pre class="source">
+int numEdges = 0;
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="numVertices">
+<span class="show-code">Code</span>
+<a href="http://api.dartlang.org/dart_core/int.html">int</a>         <strong>numVertices</strong> <a class="anchor-link"
+            href="#numVertices"
+            title="Permalink to Graph.numVertices">#</a>
+        </h4>
+        <div class="doc">
+
+<pre class="source">
+int numVertices = 0;
+</pre>
+</div>
+</div>
+        </div>
+        <div class="clear"></div>
+        </div>
+        
+        <div class="footer">
+          <div>This page was generated at 2012-10-08 22:24:24.981</div>
+        </div>
+        <script async src="../client-static.js"></script>
+        </body></html>
+        

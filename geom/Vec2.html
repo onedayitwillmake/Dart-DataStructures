@@ -1,0 +1,246 @@
+        <!DOCTYPE html>
+        <html>
+        <head>
+                <meta charset="utf-8">
+        <title>Vec2 class / geom Library / Dart Documentation</title>
+        <link rel="stylesheet" type="text/css"
+            href="../styles.css">
+        <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800" rel="stylesheet" type="text/css">
+        <link rel="shortcut icon" href="../favicon.ico">
+        
+        </head>
+        <body data-library="geom" data-type="Vec2">
+        <div class="page">
+        <div class="header">
+          <a href="../index.html"><div class="logo"></div></a>
+          <a href="../index.html">Dart Documentation</a>
+         &rsaquo; <a href="../geom.html">geom</a> &rsaquo; <a href="../geom/Vec2.html">Vec2</a>        <div id="search-box">
+          <input type="search" name="q" id="q" autocomplete="off"
+              class="search-input" placeholder="Search API">
+        </div>
+        
+      </div>
+      <div class="drop-down" id="drop-down"></div>
+      
+        <div class="nav">
+        
+<h2><div class="icon-library"></div><a href="../ds.html">ds</a></h2><h2><div class="icon-library"></div><a href="../geom.html">geom</a></h2><ul class="icon">
+<li><a href="../geom/Circle.html"><div class="icon-class"></div>Circle</a></li>
+<li><a href="../geom/DrawableCircle.html"><div class="icon-class"></div>DrawableCircle</a></li>
+<li><div class="icon-class"></div><strong>Vec2</strong></li>
+</ul>
+<h2><div class="icon-library"></div><a href="../GraphApp.dart.html">GraphApp.dart</a></h2></div>
+<div class="content">
+        <h2><strong>Vec2</strong>
+          class
+        </h2>
+        
+<div class="doc">
+<p>Provides a simple 2D Vec2 class
+@author Mario Gonzalez | onedayitwillmake.com</p>
+</div>
+<h3>Subclasses</h3>
+<p>
+<span class="type-box"><span class="icon-class"></span><a href="../geom/Circle.html">Circle</a></span></p>
+<h3>Constructors</h3>
+<div class="method"><h4 id="Vec2">
+<span class="show-code">Code</span>
+new <strong>Vec2</strong>([<a href="http://api.dartlang.org/dart_core/num.html">num</a> x = 0, <a href="http://api.dartlang.org/dart_core/num.html">num</a> y = 0]) <a class="anchor-link" href="#Vec2"
+              title="Permalink to Vec2.Vec2">#</a></h4>
+<div class="doc">
+<p>Creates a new <a class="crossref" href="../geom/Vec2.html#Vec2">Vec2</a> instance with optional x,y values</p>
+<pre class="source">
+Vec2([num this.x = 0, num this.y = 0]){}
+</pre>
+</div>
+</div>
+<h3>Methods</h3>
+<div class="method"><h4 id="cross">
+<span class="show-code">Code</span>
+<a href="http://api.dartlang.org/dart_core/num.html">num</a> <strong>cross</strong>(<a href="../geom/Vec2.html">Vec2</a> v) <a class="anchor-link" href="#cross"
+              title="Permalink to Vec2.cross">#</a></h4>
+<div class="doc">
+<p>Returns the cross-product (scalar value) of this and another <code>Vector</code></p>
+<pre class="source">
+num cross(Vec2 v) =&gt; x*v.y - y*v.x;
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="distance">
+<span class="show-code">Code</span>
+<a href="http://api.dartlang.org/dart_core/num.html">num</a> <strong>distance</strong>(<a href="../geom/Vec2.html">Vec2</a> p) <a class="anchor-link" href="#distance"
+              title="Permalink to Vec2.distance">#</a></h4>
+<div class="doc">
+<p>Returns the distance to a <code>Vector</code></p>
+<pre class="source">
+num distance( Vec2 p ) {
+  num dx = x - p.x;
+  num dy = y - p.y;
+  return Math.sqrt( dx*dx + dy*dy);
+}
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="distanceSquared">
+<span class="show-code">Code</span>
+<a href="http://api.dartlang.org/dart_core/num.html">num</a> <strong>distanceSquared</strong>(<a href="../geom/Vec2.html">Vec2</a> p) <a class="anchor-link" href="#distanceSquared"
+              title="Permalink to Vec2.distanceSquared">#</a></h4>
+<div class="doc">
+<p>Returns the distance squared to another <code>Vector</code></p>
+<pre class="source">
+num distanceSquared( Vec2 p ) {
+  num dx = x - p.x;
+  num dy = y - p.y;
+  return dx*dx + dy*dy;
+}
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="dot">
+<span class="show-code">Code</span>
+<a href="http://api.dartlang.org/dart_core/num.html">num</a> <strong>dot</strong>(<a href="../geom/Vec2.html">Vec2</a> v) <a class="anchor-link" href="#dot"
+              title="Permalink to Vec2.dot">#</a></h4>
+<div class="doc">
+<p>Returns the dot-product (scalar value) of this and another <code>Vector</code></p>
+<pre class="source">
+num dot( Vec2 v ) =&gt; x*v.x + y*v.y;
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="normalize">
+<span class="show-code">Code</span>
+void <strong>normalize</strong>() <a class="anchor-link" href="#normalize"
+              title="Permalink to Vec2.normalize">#</a></h4>
+<div class="doc">
+<p>Normalizes [this] [Vec2] in place</p>
+<pre class="source">
+void normalize() {
+  num length = Math.sqrt(x*x+y*y);
+  x /= length;
+  y /= length;
+}
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="operator /">
+<span class="show-code">Code</span>
+<a href="../geom/Vec2.html">Vec2</a> <strong>operator /</strong>(v) <a class="anchor-link" href="#operator /"
+              title="Permalink to Vec2.operator /">#</a></h4>
+<div class="doc">
+
+<pre class="source">
+Vec2 operator/(v) =&gt; (v is num) ? new Vec2(x / v, y / v) : new Vec2(x / v.x, y / v.y);
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="operator *">
+<span class="show-code">Code</span>
+<a href="../geom/Vec2.html">Vec2</a> <strong>operator *</strong>(v) <a class="anchor-link" href="#operator *"
+              title="Permalink to Vec2.operator *">#</a></h4>
+<div class="doc">
+
+<pre class="source">
+Vec2 operator*(v) =&gt; (v is num) ? new Vec2(x * v, y * v) : new Vec2(x * v.x, y * v.y);
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="operator -">
+<span class="show-code">Code</span>
+<a href="../geom/Vec2.html">Vec2</a> <strong>operator -</strong>(v) <a class="anchor-link" href="#operator -"
+              title="Permalink to Vec2.operator -">#</a></h4>
+<div class="doc">
+
+<pre class="source">
+Vec2 operator-(v) =&gt; new Vec2(x - v.x, y - v.y);
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="operator +">
+<span class="show-code">Code</span>
+<a href="../geom/Vec2.html">Vec2</a> <strong>operator +</strong>(v) <a class="anchor-link" href="#operator +"
+              title="Permalink to Vec2.operator +">#</a></h4>
+<div class="doc">
+<p>Returns a new <code>Vector</code> by adding 
+<span class="param">v</span></p>
+<pre class="source">
+Vec2 operator+(v) =&gt; new Vec2(x + v.x, y + v.y);
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="operator negate">
+<span class="show-code">Code</span>
+<a href="../geom/Vec2.html">Vec2</a> <strong>operator negate</strong>() <a class="anchor-link" href="#operator negate"
+              title="Permalink to Vec2.operator negate">#</a></h4>
+<div class="doc">
+<p>Returns a new <code>Vector</code> which is a negation of this one</p>
+<pre class="source">
+Vec2 negate() =&gt; new Vec2(-x, -y);
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="rotate">
+<span class="show-code">Code</span>
+void <strong>rotate</strong>(<a href="http://api.dartlang.org/dart_core/num.html">num</a> rad) <a class="anchor-link" href="#rotate"
+              title="Permalink to Vec2.rotate">#</a></h4>
+<div class="doc">
+<p>Rotates <code>this</code> by rad radians</p>
+<pre class="source">
+void rotate( num rad ) {
+  num cosRad = Math.cos( rad );
+  num sinRad = Math.sin( rad );
+  
+  num temp = x*cosRad-y*sinRad;
+  y = x*sinRad+y*cosRad;
+  x = temp;
+}
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="toString">
+<span class="show-code">Code</span>
+<a href="http://api.dartlang.org/dart_core/String.html">String</a> <strong>toString</strong>() <a class="anchor-link" href="#toString"
+              title="Permalink to Vec2.toString">#</a></h4>
+<div class="doc">
+
+<pre class="source">
+String toString() =&gt; '(${x.toStringAsFixed(3)}, ${y.toStringAsFixed(3)})';
+</pre>
+</div>
+</div>
+<h3>Fields</h3>
+<div class="field"><h4 id="x">
+<span class="show-code">Code</span>
+<a href="http://api.dartlang.org/dart_core/num.html">num</a>         <strong>x</strong> <a class="anchor-link"
+            href="#x"
+            title="Permalink to Vec2.x">#</a>
+        </h4>
+        <div class="doc">
+
+<pre class="source">
+num x;
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="y">
+<span class="show-code">Code</span>
+<a href="http://api.dartlang.org/dart_core/num.html">num</a>         <strong>y</strong> <a class="anchor-link"
+            href="#y"
+            title="Permalink to Vec2.y">#</a>
+        </h4>
+        <div class="doc">
+
+<pre class="source">
+num y;
+</pre>
+</div>
+</div>
+        </div>
+        <div class="clear"></div>
+        </div>
+        
+        <div class="footer">
+          <div>This page was generated at 2012-10-08 22:24:25.020</div>
+        </div>
+        <script async src="../client-static.js"></script>
+        </body></html>
+        

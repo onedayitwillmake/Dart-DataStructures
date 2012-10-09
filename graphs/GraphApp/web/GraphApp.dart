@@ -1,6 +1,6 @@
 #import('dart:html');
 #import('oneday/ds/ds.dart');
-
+#import('oneday/geom/geom.dart');
 
 Graph aGraph;
 CanvasRenderingContext2D context;
@@ -15,5 +15,8 @@ void main() {
 
 onSuccess( HttpRequest req ) {
   aGraph = new Graph.fromSimpleText( req.responseText );
-  print(aGraph);
+  var c = new Circle(0, 0, 10);
+  print(c);
+  
+//  print(aGraph);
 }

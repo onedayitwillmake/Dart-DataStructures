@@ -1,29 +1,24 @@
 
 /**
- * Provides a simple 2D Vector class
+ * Provides a simple 2D Vec2 class
  * @author Mario Gonzalez | onedayitwillmake.com
  */ 
 class Vec2 {
   num x;
   num y;
-  
-  /**
-   * Creates a new [Vec2] instance with optional x,y values
-   */
-  Vec2([num this.x = 0, num this.y = 0]);
-  
-  /**
-   * Normalizes [this] [Vec2] in place
-   */ 
+   
+  ///Creates a new [Vec2] instance with optional x,y values
+  Vec2([num this.x = 0, num this.y = 0]){}
+//  Vec2( num pX, num pY ) : this.x = pX, this.y = pY {}  
+
+  /// Normalizes [this] [Vec2] in place
   void normalize() {
     num length = Math.sqrt(x*x+y*y);
     x /= length;
     y /= length;
   }
   
-  /**
-   * Rotes [this] by rad radians
-   */
+  /// Rotates [this] by rad radians
   void rotate( num rad ) {
     num cosRad = Math.cos( rad );
     num sinRad = Math.sin( rad );
@@ -33,18 +28,37 @@ class Vec2 {
     x = temp;
   }
   
+  /// Returns the distance to a [Vector]
+  num distance( Vec2 p ) {
+    num dx = x - p.x;
+    num dy = y - p.y;
+    return Math.sqrt( dx*dx + dy*dy);
+  }
   
+  /// Returns the distance squared to another [Vector]
+  num distanceSquared( Vec2 p ) {
+    num dx = x - p.x;
+    num dy = y - p.y;
+    return dx*dx + dy*dy;
+  }
+  
+  /// Returns the cross-product (scalar value) of this and another [Vector]
   num cross(Vec2 v) => x*v.y - y*v.x;
   
+  /// Returns the dot-product (scalar value) of this and another [Vector]
+  num dot( Vec2 v ) => x*v.x + y*v.y;
+  
+  /// Returns a new [Vector] which is a negation of this one
   Vec2 negate() => new Vec2(-x, -y);
   
-  Vec2 operator+(d) => (d is num) ? new Vec2(x + d, y + d) : new Vec2(x + d.x, y + d.y);
+  /// Returns a new [Vector] by adding [v]
+  Vec2 operator+(v) => new Vec2(x + v.x, y + v.y);
 
-  Vec2 operator-(d) => (d is num) ? new Vec2(x - d, y - d) : new Vec2(x - d.x, y - d.y);
+  Vec2 operator-(v) => new Vec2(x - v.x, y - v.y);
 
-  Vec2 operator*(d) => (d is num) ? new Vec2(x * d, y * d) : new Vec2(x * d.x, y * d.y);
+  Vec2 operator*(v) => (v is num) ? new Vec2(x * v, y * v) : new Vec2(x * v.x, y * v.y);
 
-  Vec2 operator/(d) => (d is num) ? new Vec2(x / d, y / d) : new Vec2(x / d.x, y / d.y);
+  Vec2 operator/(v) => (v is num) ? new Vec2(x / v, y / v) : new Vec2(x / v.x, y / v.y);
 
   String toString() => '(${x.toStringAsFixed(3)}, ${y.toStringAsFixed(3)})';
 }

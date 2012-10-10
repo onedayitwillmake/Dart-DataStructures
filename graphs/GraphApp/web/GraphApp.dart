@@ -18,5 +18,5 @@ onSuccess( HttpRequest req ) {
   var c = new Circle(0, 0, 10);
   print(c);
   
-//  print(aGraph);
+ print(aGraph);
 }

@@ -4,12 +4,13 @@
  */ 
 class Graph {
   
-  List<EdgeNode> edges;       // adjancency info
-  List<num> degree;           // outdegree of each vertex
-  int numVertices = 0;        // number of vertices in graph
-  int numEdges = 0;           // number of edges in the graph
-  bool directed;              // is the graph directed?
+  List<EdgeNode> edges;       /// adjancency info
+  List<num> degree;           /// outdegree of each vertex
+  int numVertices = 0;        /// number of vertices in graph
+  int numEdges = 0;           /// number of edges in the graph
+  bool directed;              /// is the graph directed?
   
+  int _uuid = 0;
  
   /**
    * Creates a new [Graph] instance. 
@@ -50,7 +51,7 @@ class Graph {
    * Inserts an [EdgeNode] into the [Graph]
    */
   insertEdge( num x, num y, bool directed ) {
-    EdgeNode p = new EdgeNode( y, 0 );
+    EdgeNode p = new EdgeNode( y, 0, nextUUID() );
     p.next = edges[x];
     
     edges[x] = p;
@@ -81,4 +82,7 @@ class Graph {
     
     return output.toString();
   }
+  
+  /// Returns an auto-incremented UUID
+  int nextUUID() => ( ++_uuid );
 }

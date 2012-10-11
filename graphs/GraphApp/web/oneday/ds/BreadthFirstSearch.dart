@@ -1,8 +1,15 @@
 class BreadthFirstSearch implements BFSDelegate {
   
-  static final num STATE_UNDISCOVERED = 0;    /// Vertex is in initial untouched states. Initially the only vertex in [UNDISCOVERED] is the start vertex
-  static final num STATE_DISCOVERED = 1;      /// Vertex has been found, but we have not yet checked out all it's incident edges
-  static final num STATE_PROCESSED = 2;       /// The vertex after we have visited all it's incident edges
+  /// Vertex is in initial untouched states. Initially the only vertex in [UNDISCOVERED] is the start vertex
+  static final num STATE_UNDISCOVERED = 0;
+  /// Vertex has been found, but we have not yet checked out all it's incident edges
+  static final num STATE_DISCOVERED = 1;      
+  /// The vertex after we have visited all it's incident edges
+  static final num STATE_PROCESSED = 2;       
+  
+  static final int COLOR_UNCOLORED = 0;
+  static final int COLOR_RED = 1;
+  static final int COLOR_BLACK = 2;
   
   /**
    * A mapping from [EdgeNode] <-> either [UNDISCOVERED] or [DISCOVERED]
@@ -106,22 +113,38 @@ class BreadthFirstSearch implements BFSDelegate {
   }
   
   /// Returns a set of all the start nodes for every set of connected components
-  void connectedComponents() {
+  List<EdgeNode > connectedComponents() {
     resetGraph();
-    List<EdgeNode >connectedSet = new List<EdgeNode >(); 
+    List<EdgeNode >connectedSets = new List<EdgeNode >(); 
     
     num c = 0;
     num i;
     for( i = 1; i <= graph.numVertices; i++ ) {
       if( edgeStateMap[ i ] != STATE_DISCOVERED && edgeStateMap[ i ] != STATE_PROCESSED ) {
-        connectedSet.addLast( graph.getNode(i) );
+        connectedSets.addLast( graph.getNode(i) );
         c = c+1;
         execute( graph.getNode(i) );
       }
     }
+    
+    return connectedSets;
   }
   
-  
+//  /// Returns a mapping of [EdgeNode] to COLOR_RED | COLOR_BLACK if the graph is **bipartite**
+//  Map< EdgeNode, int > twocolor() {
+//    Map< EdgeNode, int > colorMapping = new Map< EdgeNode, int >();
+//    
+////    resetGraph();
+////    for( i = 1; i <= graph.numVertices; i++ ) {
+////       if( )
+////    }
+////    
+////    
+////    
+//    return 
+//  }
+//  
+//  
   
 // BFSDELEGATE METHODS
   

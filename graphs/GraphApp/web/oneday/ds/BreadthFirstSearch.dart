@@ -7,32 +7,56 @@ class BreadthFirstSearch implements BFSDelegate {
   /**
    * A mapping from [EdgeNode] <-> either [UNDISCOVERED] or [DISCOVERED]
    */
-  Map< int, int >       edgeStateMap = new Map< int, int >();
+  Map< int, int >       edgeStateMap;
   
   /**
    * A mapping of [EdgeNode] (via their .id property) to another [EdgeNode]
    */
-  Map< EdgeNode, EdgeNode >  parentMap = new Map< EdgeNode, EdgeNode >();                
+  Map< EdgeNode, EdgeNode >  parentMap;                
   
   /**
    * A FIFO style Queue used to store [DISCOVERED] graph vertices
    */
-  Queue< EdgeNode > fifoQueue = new Queue< EdgeNode >();
+  Queue< EdgeNode > fifoQueue;
   
   /**
    * The [Graph] instance to be processed
    */
   Graph graph;
   
-  EdgeNode _a;    /// Current vertex
-  EdgeNode _b;    /// Successor vertex
+  /// Start vertex
+  EdgeNode _start;
+  /// Current vertex
+  EdgeNode _a;    
+  /// Successor vertex
+  EdgeNode _b;    
   
-  BreadthFirstSearch( Graph this.graph, EdgeNode start ) {
+  BreadthFirstSearch( Graph this.graph, this._start ) {
+    resetGraph();
+    connectedComponents();
+//    execute();
+    
+//    findPath( _start, graph.getNode(4) );
+  }
+  
+  /// Resets all book keeping properties of this BFS (fifoQueue, parentMap, edgeStateMap)
+  void resetGraph() {
+    edgeStateMap = new Map< int, int >();
+    parentMap = new Map< EdgeNode, EdgeNode >();
+    fifoQueue = new Queue< EdgeNode >();
+  }
+  
+  void execute([ EdgeNode startNode = null ]) { 
+    
+    if( startNode != null ) {
+      _start = startNode;
+    }
+    
     EdgeNode p;
     
     // Add the start node to the queue and set it to discovered
-    fifoQueue.addFirst( start );
-    edgeStateMap[ start.id ] = STATE_DISCOVERED;
+    fifoQueue.addFirst( _start );
+    edgeStateMap[ _start.id ] = STATE_DISCOVERED;
     
     
     while( !fifoQueue.isEmpty() ) {
@@ -63,12 +87,50 @@ class BreadthFirstSearch implements BFSDelegate {
     }
   }
   
+  /// Returns the path from a start node, to an edge node. **IMPORTANT** Assumes the bfs ( [execute] ) has already been performed.
+  List<EdgeNode> findPath( EdgeNode start, EdgeNode end ) {
+    List<EdgeNode >path = new List<EdgeNode>();
+    
+    if( start == end || end == null ) {
+      path.addLast( start );
+      
+      print("${start.a}");
+    } else {
+      findPath( start, parentMap[end] ); // Recurisve
+      path.addLast( end );
+      
+      print("${end.a}");
+    }
+    
+    return path;
+  }
+  
+  /// Returns a set of all the start nodes for every set of connected components
+  void connectedComponents() {
+    resetGraph();
+    List<EdgeNode >connectedSet = new List<EdgeNode >(); 
+    
+    num c = 0;
+    num i;
+    for( i = 1; i <= graph.numVertices; i++ ) {
+      if( edgeStateMap[ i ] != STATE_DISCOVERED && edgeStateMap[ i ] != STATE_PROCESSED ) {
+        connectedSet.addLast( graph.getNode(i) );
+        c = c+1;
+        execute( graph.getNode(i) );
+      }
+    }
+  }
+  
+  
+  
+// BFSDELEGATE METHODS
+  
   processVertexEarly( EdgeNode a ) { 
     print("processing vertex ${a.a}");
   }
   
   processEdge( EdgeNode a, EdgeNode b) {
-    print("\tFound edge [${a}, ${b}]");
+    print("\tFound edge [${a.a}, ${b.a}]");
   }
   
   processVertexLate( EdgeNode a ) {

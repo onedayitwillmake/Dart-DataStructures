@@ -37,17 +37,17 @@ class Graph {
   /**
    * Creates a [Graph] from a text file such that each line contains an EdgeNode(a,b)
    */
-  factory Graph.fromSimpleText( String graphText ) {
-    Graph g = new Graph( false );
+  factory Graph.fromSimpleText( String graphText, bool isDirected ) {
+    Graph g = new Graph( isDirected );
     List<String> edgeInfo = graphText.split("\n");
     
     // First line should contain the number of vertices in the graph and nothing else
     g.numVertices = parseInt( edgeInfo[0] );
-    edgeInfo.removeLast();  // \n is the last char in the file, remove
     edgeInfo.removeAt(0);   // remove the first line which contains only numvertices property
     
     for( String pair in edgeInfo ) {
       List<String> nodeInfo = pair.split(",");
+      if( nodeInfo.length != 2 ) break; // Bad line, abort!
       
       // Create an Edge (a,b)
       g.insertEdge( parseInt(nodeInfo[0]), parseInt(nodeInfo[1]), false );

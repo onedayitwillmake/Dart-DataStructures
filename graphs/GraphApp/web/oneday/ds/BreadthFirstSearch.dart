@@ -34,7 +34,7 @@ class BreadthFirstSearch implements BFSDelegate {
     fifoQueue.addFirst( start );
     edgeStateMap[ start.id ] = STATE_DISCOVERED;
     
-    num counter = 0;
+    
     while( !fifoQueue.isEmpty() ) {
       _a = fifoQueue.removeFirst();
       
@@ -42,17 +42,16 @@ class BreadthFirstSearch implements BFSDelegate {
       edgeStateMap[ _a.a ] = STATE_PROCESSED;
       
       p = _a;
-      while( p != null && ++counter < 100 ) {
+      while( p != null ) {
         _b = graph.getNode( p.b );
         
         // new edge
-        if( edgeStateMap[ _b.a ] == null || graph.isDirected ) {
+        if( edgeStateMap[ _b.a ] != STATE_PROCESSED || graph.isDirected ) {
           processEdge( _a, _b );
         }
         
         // Since this is a new connection, add it to the queue and store it's parent
         if( edgeStateMap[ _b.a ] != STATE_DISCOVERED && edgeStateMap[ _b.a ] != STATE_PROCESSED ) {
-          print("\t\tAdding to queue ${_b}");
           fifoQueue.addFirst( _b );
           edgeStateMap[ _b.a ] = STATE_DISCOVERED;
           parentMap[ _b ] = _a;
@@ -65,7 +64,7 @@ class BreadthFirstSearch implements BFSDelegate {
   }
   
   processVertexEarly( EdgeNode a ) { 
-    print("processed vertex ${a}");
+    print("processing vertex ${a.a}");
   }
   
   processEdge( EdgeNode a, EdgeNode b) {

@@ -4,19 +4,26 @@
  */ 
 class Graph {
   
-  List<EdgeNode> edges;       /// adjancency info
-  List<num> degree;           /// outdegree of each vertex
-  int numVertices = 0;        /// number of vertices in graph
-  int numEdges = 0;           /// number of edges in the graph
-  bool directed;              /// is the graph directed?
+  /// adjancency info
+  List<EdgeNode> edges;       
+  /// outdegree of each vertex
+  List<num> degree;           
   
+  /// number of vertices in graph
+  int numVertices = 0;        
+  /// number of edges in the graph
+  int numEdges = 0;           
+  /// is the graph directed?
+  bool isDirected;              
+  
+  /// Static UUID incrementer
   int _uuid = 0;
  
   /**
    * Creates a new [Graph] instance. 
    * The graph can either be 'undirected' (two way) or 'directed' (one way)
    */
-  Graph( bool isDirected ) : directed = isDirected {
+  Graph( bool pIsDirected ) : isDirected = pIsDirected {
     num maxVerts = 1000;
     
     degree = new List<num>(maxVerts+1); 
@@ -41,6 +48,8 @@ class Graph {
     
     for( String pair in edgeInfo ) {
       List<String> nodeInfo = pair.split(",");
+      
+      // Create an Edge (a,b)
       g.insertEdge( parseInt(nodeInfo[0]), parseInt(nodeInfo[1]), false );
     }
     
@@ -50,16 +59,16 @@ class Graph {
   /**
    * Inserts an [EdgeNode] into the [Graph]
    */
-  insertEdge( num x, num y, bool directed ) {
-    EdgeNode p = new EdgeNode( y, 0, nextUUID() );
-    p.next = edges[x];
+  insertEdge( num a, num b, bool directed ) {
+    EdgeNode p = new EdgeNode( a, b, 0, nextUUID() );
+    p.next = edges[a];
     
-    edges[x] = p;
-    degree[x]++;
+    edges[a] = p;
+    degree[a]++;
     
     // Insert in reverse if undirected
     if( !directed ) {
-      insertEdge(y, x, true);
+      insertEdge(b, a, true);
     } else {
       numEdges++;
     }
@@ -75,7 +84,7 @@ class Graph {
       output.add( "${i}:" );
       EdgeNode p = edges[i];
       while( p != null ) {
-        output.add(" ${p.y}");
+        output.add(" ${p.b}");
         p = p.next;
       }
     }
@@ -85,4 +94,7 @@ class Graph {
   
   /// Returns an auto-incremented UUID
   int nextUUID() => ( ++_uuid );
+
+  /// Given an node label, returns it from our edges array
+  EdgeNode getNode( num x ) => ( edges[x] );
 }

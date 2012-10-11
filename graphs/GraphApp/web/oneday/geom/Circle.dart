@@ -1,5 +1,8 @@
 class Circle extends Vec2 {
+  /// Radius of this [Circle]
   num radius;
+  
+  /// PI * 2
   const TAU = Math.PI * 2;
   
   /// Creates a new [Circle] with [radius]
@@ -13,7 +16,7 @@ class Circle extends Vec2 {
 }
 
 /**
- * A Circle class which knows how to draw itself
+ * A [Circle] class which knows how to draw itself
  */
 class DrawableCircle extends Circle {
   String color;

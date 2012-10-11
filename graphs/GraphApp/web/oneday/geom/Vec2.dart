@@ -9,7 +9,6 @@ class Vec2 {
    
   ///Creates a new [Vec2] instance with optional x,y values
   Vec2([num this.x = 0, num this.y = 0]);
-//  Vec2( num pX, num pY ) : this.x = pX, this.y = pY {}  
 
   /// Normalizes [this] [Vec2] in place
   void normalize() {

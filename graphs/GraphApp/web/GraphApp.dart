@@ -15,8 +15,5 @@ void main() {
 
 onSuccess( HttpRequest req ) {
   aGraph = new Graph.fromSimpleText( req.responseText );
-  var c = new Circle(0, 0, 10);
-  print(c);
-  
- print(aGraph);
+  var bfs = new BreadthFirstSearch( aGraph, aGraph.getNode(1) );
 }

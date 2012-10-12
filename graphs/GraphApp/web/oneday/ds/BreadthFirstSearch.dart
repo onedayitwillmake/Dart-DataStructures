@@ -31,6 +31,9 @@ class BreadthFirstSearch implements BFSDelegate {
    */
   Graph graph;
   
+  /// A delegate which follows the [BFSDelegate] interface
+  BFSDelegate _delegate;
+  
   /// Start vertex
   EdgeNode _start;
   /// Current vertex
@@ -40,7 +43,8 @@ class BreadthFirstSearch implements BFSDelegate {
   
   BreadthFirstSearch( Graph this.graph, this._start ) {
     resetGraph();
-    connectedComponents();
+    twocolor();
+//    connectedComponents();
 //    execute();
     
 //    findPath( _start, graph.getNode(4) );
@@ -82,7 +86,7 @@ class BreadthFirstSearch implements BFSDelegate {
         }
         
         // Since this is a new connection, add it to the queue and store it's parent
-        if( edgeStateMap[ _b.a ] != STATE_DISCOVERED && edgeStateMap[ _b.a ] != STATE_PROCESSED ) {
+        if( edgeNodeIsNotDiscovered( _b.a ) ) {
           fifoQueue.addFirst( _b );
           edgeStateMap[ _b.a ] = STATE_DISCOVERED;
           parentMap[ _b ] = _a;
@@ -120,7 +124,7 @@ class BreadthFirstSearch implements BFSDelegate {
     num c = 0;
     num i;
     for( i = 1; i <= graph.numVertices; i++ ) {
-      if( edgeStateMap[ i ] != STATE_DISCOVERED && edgeStateMap[ i ] != STATE_PROCESSED ) {
+      if( edgeNodeIsNotDiscovered(i) ) {
         connectedSets.addLast( graph.getNode(i) );
         c = c+1;
         execute( graph.getNode(i) );
@@ -130,34 +134,47 @@ class BreadthFirstSearch implements BFSDelegate {
     return connectedSets;
   }
   
-//  /// Returns a mapping of [EdgeNode] to COLOR_RED | COLOR_BLACK if the graph is **bipartite**
-//  Map< EdgeNode, int > twocolor() {
-//    Map< EdgeNode, int > colorMapping = new Map< EdgeNode, int >();
-//    
-////    resetGraph();
-////    for( i = 1; i <= graph.numVertices; i++ ) {
-////       if( )
-////    }
-////    
-////    
-////    
-//    return 
-//  }
-//  
-//  
+  /// Returns a mapping of [EdgeNode] to COLOR_RED | COLOR_BLACK if the graph is **bipartite**
+  Map< EdgeNode, int > twocolor( ) {
+    
+    BiPartiteColorDelegate twoColorHelper = new BiPartiteColorDelegate();
+    
+    // Store the current delegate in a temporary variable
+    BFSDelegate prevDelegate = _delegate;
+    _delegate = twoColorHelper;
+    
+    resetGraph();
+    for( num i = 1; i <= graph.numVertices; i++ ) {
+      EdgeNode n = graph.getNode(i);
+      
+      if(edgeNodeIsNotDiscovered( i ) ) {
+        twoColorHelper.colorMapping[ n ] = COLOR_RED;
+        execute( n );
+      }
+    }
+    
+    // Reset the delegate and return a copy
+    _delegate = prevDelegate;
+    return new Map.from( twoColorHelper.colorMapping );
+  }
+  
+  /// Returns true the node has been discovered
+  edgeNodeIsNotDiscovered( num x ) => ( edgeStateMap[ x ] != STATE_DISCOVERED && edgeStateMap[ x ] != STATE_PROCESSED );
   
 // BFSDELEGATE METHODS
   
   processVertexEarly( EdgeNode a ) { 
     print("processing vertex ${a.a}");
+    if( _delegate != null ) _delegate.processVertexEarly(a);
   }
   
   processEdge( EdgeNode a, EdgeNode b) {
     print("\tFound edge [${a.a}, ${b.a}]");
+    if( _delegate != null ) _delegate.processEdge(a, b);
   }
   
   processVertexLate( EdgeNode a ) {
-    
+    if( _delegate != null ) _delegate.processVertexLate(a);
   }
 }
 /**
@@ -172,4 +189,39 @@ interface BFSDelegate {
   
   /// Called when the vertex has been fully processed ( All recursively connected nodes discovered )
   processVertexLate( EdgeNode a );       
+}
+
+/**
+ * A simple BFSDelegate which is used by the twocolor function to create a bipartite graph coloring
+ */
+class BiPartiteColorDelegate implements BFSDelegate {
+  /// Whether this graph is is bipartite or not
+  bool isBiPartite = true;
+  
+  /// Stores the current coloring information for each [EdgeNode]
+  Map< EdgeNode, int > colorMapping = new Map< EdgeNode, int >();
+  
+  
+  void processEdge( EdgeNode a, EdgeNode b) {
+    if( colorMapping[a] == colorMapping[b] ) {
+      isBiPartite = false;
+      print("Warning: not bipartite due to  (${a.a},${b.a})");
+    }
+    
+    colorMapping[b] = complement( colorMapping[a] );
+  }
+  
+  /**
+   *  Returns the complementory color for the type passed in.
+   *  That is BreadthFirstSearch.COLOR_RED if black is passed in, and BreadthFirstSearch.COLOR_BLACK if red is passed in. If neither is passed in BreadthFirstSearch.COLOR_NONE is returned.
+   */ 
+  int complement( int color ) {
+    if( color == BreadthFirstSearch.COLOR_RED ) return BreadthFirstSearch.COLOR_BLACK;
+    if( color == BreadthFirstSearch.COLOR_BLACK ) return BreadthFirstSearch.COLOR_RED;
+    return BreadthFirstSearch.COLOR_UNCOLORED;
+  }
+  
+  // The following two callbacks are unused
+  void processVertexEarly( EdgeNode a ) {}
+  void processVertexLate( EdgeNode a ) {}
 }

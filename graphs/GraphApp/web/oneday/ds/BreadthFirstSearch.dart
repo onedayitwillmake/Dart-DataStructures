@@ -1,3 +1,8 @@
+/**
+ * BreadthFirstSearch is graph search strategy which begins at the root node, and inspects all neighboring nodes, 
+ * and in turn inspects their neighboring nodes which were unvisited, and so on  
+ * Mario Gonzalez | onedayitwillmake.com
+ */
 class BreadthFirstSearch implements BFSDelegate {
   
   /// Vertex is in initial untouched states. Initially the only vertex in [UNDISCOVERED] is the start vertex
@@ -43,10 +48,9 @@ class BreadthFirstSearch implements BFSDelegate {
   
   BreadthFirstSearch( Graph this.graph, this._start ) {
     resetGraph();
-    twocolor();
+//    twocolor();
 //    connectedComponents();
 //    execute();
-    
 //    findPath( _start, graph.getNode(4) );
   }
   

@@ -5,3 +5,4 @@
 #source("Graph.dart");
 #source("EdgeNode.dart");
 #source("BreadthFirstSearch.dart");
+#source("DepthFirstSearch.dart");

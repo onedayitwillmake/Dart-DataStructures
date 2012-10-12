@@ -16,5 +16,6 @@ void main() {
 onSuccess( HttpRequest req ) {
   aGraph = new Graph.fromSimpleText( req.responseText, false );
   print(aGraph);
-  var bfs = new BreadthFirstSearch( aGraph, aGraph.getNode(1) );
+//  var bfs = new BreadthFirstSearch( aGraph, aGraph.getNode(1) );
+  var dfs = new DepthFirstSearch( aGraph );
 }

@@ -1,4 +1,4 @@
-class GraphSearch {
+class GraphSearch implements Disposable {
   /// Vertex is in initial untouched states. Initially the only vertex in [UNDISCOVERED] is the start vertex
   static final num STATE_UNDISCOVERED = 0;
   /// Vertex has been found, but we have not yet checked out all it's incident edges
@@ -25,7 +25,23 @@ class GraphSearch {
   /// Start vertex
   EdgeNode _start;
   
+  /// Goal vertex if applicable
+  EdgeNode _goal;
+  
+  /// A delegate which follows the [BFSDelegate] interface
+  GraphSearchDelegate _delegate;
+  
+  /// Constructor
   GraphSearch( this.graph, this._start );
+
+  /// Clear memory
+  void dispose() {
+    edgeStateMap = null;
+    parentMap = null;
+    _start = null;
+    _goal = null;
+    _delegate = null;
+  }
   
   /// Resets all book keeping properties of this BFS (fifoQueue, parentMap, edgeStateMap)
   void resetGraph() {
@@ -33,6 +49,38 @@ class GraphSearch {
     parentMap = new Map< EdgeNode, EdgeNode >();
   }
   
+  /// Returns the path from a start node, to an edge node. **IMPORTANT** Assumes the search ( [execute] ) has already been performed.
+  List<EdgeNode> findPath( EdgeNode start, EdgeNode end ) {
+    List<EdgeNode >path = new List<EdgeNode>();
+    
+    if( start == end || end == null ) {
+      path.addLast( start );
+      
+      print("${start.a}");
+    } else {
+      findPath( start, parentMap[end] ); // Recurisve
+      path.addLast( end );
+      
+      print("${end.a}");
+    }
+    
+    return path;
+  }
+  
   /// Returns true if this edge node has not yet been discovered
   edgeNodeIsNotDiscovered( num x ) => ( edgeStateMap[ x ] != STATE_DISCOVERED && edgeStateMap[ x ] != STATE_PROCESSED );
+}
+
+/**
+ * An interface for processing nodes in the graph
+ */
+interface GraphSearchDelegate {
+  /// Called when an EdgeNode is popped from the queue
+  processVertexEarly( EdgeNode a );       
+  
+  /// Called when a new Edge connection is found
+  processEdge( EdgeNode a, EdgeNode b);  
+  
+  /// Called when the vertex has been fully processed ( All recursively connected nodes discovered )
+  processVertexLate( EdgeNode a );       
 }

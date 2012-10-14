@@ -2,6 +2,7 @@
 
 #import("dart:math");
 
+#source("../disposable.dart");
 #source("Graph.dart");
 #source("EdgeNode.dart");
 #source("GraphSearch.dart");

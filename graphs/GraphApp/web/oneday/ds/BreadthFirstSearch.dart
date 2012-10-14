@@ -3,23 +3,15 @@
  * and in turn inspects their neighboring nodes which were unvisited, and so on  
  * Mario Gonzalez | onedayitwillmake.com
  */
-class BreadthFirstSearch extends GraphSearch implements BFSDelegate {     
+class BreadthFirstSearch extends GraphSearch implements GraphSearchDelegate {     
   static final int COLOR_UNCOLORED = 0; 
   static final int COLOR_RED = 1;
-  static final int COLOR_BLACK = 2;
+  static final int COLORbLACK = 2;
   
   /**
    * A FIFO style Queue used to store [DISCOVERED] graph vertices
    */
-  Queue< EdgeNode > fifoQueue;
-  
-  /// A delegate which follows the [BFSDelegate] interface
-  BFSDelegate _delegate;
-  
-  /// Current vertex
-  EdgeNode _a;    
-  /// Successor vertex
-  EdgeNode _b;    
+  Queue< EdgeNode > fifoQueue; 
   
   BreadthFirstSearch( Graph aGraph, EdgeNode aStartNode ) : super( aGraph, aStartNode ) {
     resetGraph();
@@ -27,6 +19,11 @@ class BreadthFirstSearch extends GraphSearch implements BFSDelegate {
 //    connectedComponents();
 //    execute();
 //    findPath( _start, graph.getNode(4) );
+  }
+  
+  void dispose() {
+    super.dispose();
+    fifoQueue = null;
   }
   
   /// Resets all book keeping properties of this BFS (fifoQueue, parentMap, edgeStateMap)
@@ -41,57 +38,41 @@ class BreadthFirstSearch extends GraphSearch implements BFSDelegate {
       _start = startNode;
     }
     
-    EdgeNode p;
+    EdgeNode a; // Current vertex
+    EdgeNode b; // Connecting vertex
+    
+    EdgeNode p; // Temp pointer
     
     // Add the start node to the queue and set it to discovered
     fifoQueue.addFirst( _start );
     edgeStateMap[ _start.id ] = STATE_DISCOVERED;
     
-    
     while( !fifoQueue.isEmpty() ) {
-      _a = fifoQueue.removeFirst();
+      a = fifoQueue.removeFirst();
       
-      processVertexEarly( _a );
-      edgeStateMap[ _a.a ] = STATE_PROCESSED;
+      processVertexEarly( a );
+      edgeStateMap[ a.a ] = STATE_PROCESSED;
       
-      p = _a;
+      p = a;
       while( p != null ) {
-        _b = graph.getNode( p.b );
+        b = graph.getNode( p.b );
         
         // new edge
-        if( edgeStateMap[ _b.a ] != STATE_PROCESSED || graph.isDirected ) {
-          processEdge( _a, _b );
+        if( edgeStateMap[ b.a ] != STATE_PROCESSED || graph.isDirected ) {
+          processEdge( a, b );
         }
         
         // Since this is a new connection, add it to the queue and store it's parent
-        if( edgeNodeIsNotDiscovered( _b.a ) ) {
-          fifoQueue.addFirst( _b );
-          edgeStateMap[ _b.a ] = STATE_DISCOVERED;
-          parentMap[ _b ] = _a;
+        if( edgeNodeIsNotDiscovered( b.a ) ) {
+          fifoQueue.addFirst( b );
+          edgeStateMap[ b.a ] = STATE_DISCOVERED;
+          parentMap[ b ] = a;
         }
         
         p = p.next;
       }
-      processVertexLate( _a );
+      processVertexLate( a );
     }
-  }
-  
-  /// Returns the path from a start node, to an edge node. **IMPORTANT** Assumes the bfs ( [execute] ) has already been performed.
-  List<EdgeNode> findPath( EdgeNode start, EdgeNode end ) {
-    List<EdgeNode >path = new List<EdgeNode>();
-    
-    if( start == end || end == null ) {
-      path.addLast( start );
-      
-      print("${start.a}");
-    } else {
-      findPath( start, parentMap[end] ); // Recurisve
-      path.addLast( end );
-      
-      print("${end.a}");
-    }
-    
-    return path;
   }
   
   /// Returns a set of all the start nodes for every set of connected components
@@ -112,13 +93,13 @@ class BreadthFirstSearch extends GraphSearch implements BFSDelegate {
     return connectedSets;
   }
   
-  /// Returns a mapping of [EdgeNode] to COLOR_RED | COLOR_BLACK if the graph is **bipartite**
+  /// Returns a mapping of [EdgeNode] to COLOR_RED | COLORbLACK if the graph is **bipartite**
   Map< EdgeNode, int > twocolor( ) {
     
     BiPartiteColorDelegate twoColorHelper = new BiPartiteColorDelegate();
     
     // Store the current delegate in a temporary variable
-    BFSDelegate prevDelegate = _delegate;
+    GraphSearchDelegate prevDelegate = _delegate;
     _delegate = twoColorHelper;
     
     resetGraph();
@@ -136,8 +117,7 @@ class BreadthFirstSearch extends GraphSearch implements BFSDelegate {
     return new Map.from( twoColorHelper.colorMapping );
   }
   
-// BFSDELEGATE METHODS
-  
+// GraphSearchDelegate METHODS
   processVertexEarly( EdgeNode a ) { 
     print("processing vertex ${a.a}");
     if( _delegate != null ) _delegate.processVertexEarly(a);
@@ -152,24 +132,11 @@ class BreadthFirstSearch extends GraphSearch implements BFSDelegate {
     if( _delegate != null ) _delegate.processVertexLate(a);
   }
 }
-/**
- * An interface for processing nodes in the graph
- */
-interface BFSDelegate {
-  /// Called when an EdgeNode is popped from the queue
-  processVertexEarly( EdgeNode a );       
-  
-  /// Called when a new Edge connection is found
-  processEdge( EdgeNode a, EdgeNode b);  
-  
-  /// Called when the vertex has been fully processed ( All recursively connected nodes discovered )
-  processVertexLate( EdgeNode a );       
-}
 
 /**
- * A simple BFSDelegate which is used by the twocolor function to create a bipartite graph coloring
+ * A simple GraphSearchDelegate which is used by the twocolor function to create a bipartite graph coloring
  */
-class BiPartiteColorDelegate implements BFSDelegate {
+class BiPartiteColorDelegate implements GraphSearchDelegate {
   /// Whether this graph is is bipartite or not
   bool isBiPartite = true;
   
@@ -188,11 +155,11 @@ class BiPartiteColorDelegate implements BFSDelegate {
   
   /**
    *  Returns the complementory color for the type passed in.
-   *  That is BreadthFirstSearch.COLOR_RED if black is passed in, and BreadthFirstSearch.COLOR_BLACK if red is passed in. If neither is passed in BreadthFirstSearch.COLOR_NONE is returned.
+   *  That is BreadthFirstSearch.COLOR_RED if black is passed in, and BreadthFirstSearch.COLORbLACK if red is passed in. If neither is passed in BreadthFirstSearch.COLOR_NONE is returned.
    */ 
   int complement( int color ) {
-    if( color == BreadthFirstSearch.COLOR_RED ) return BreadthFirstSearch.COLOR_BLACK;
-    if( color == BreadthFirstSearch.COLOR_BLACK ) return BreadthFirstSearch.COLOR_RED;
+    if( color == BreadthFirstSearch.COLOR_RED ) return BreadthFirstSearch.COLORbLACK;
+    if( color == BreadthFirstSearch.COLORbLACK ) return BreadthFirstSearch.COLOR_RED;
     return BreadthFirstSearch.COLOR_UNCOLORED;
   }
   

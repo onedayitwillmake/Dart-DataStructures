@@ -3,50 +3,25 @@
  * and in turn inspects their neighboring nodes which were unvisited, and so on  
  * Mario Gonzalez | onedayitwillmake.com
  */
-class BreadthFirstSearch implements BFSDelegate {
-  
-  /// Vertex is in initial untouched states. Initially the only vertex in [UNDISCOVERED] is the start vertex
-  static final num STATE_UNDISCOVERED = 0;
-  /// Vertex has been found, but we have not yet checked out all it's incident edges
-  static final num STATE_DISCOVERED = 1;      
-  /// The vertex after we have visited all it's incident edges
-  static final num STATE_PROCESSED = 2;       
-  
-  static final int COLOR_UNCOLORED = 0;
+class BreadthFirstSearch extends GraphSearch implements BFSDelegate {     
+  static final int COLOR_UNCOLORED = 0; 
   static final int COLOR_RED = 1;
   static final int COLOR_BLACK = 2;
-  
-  /**
-   * A mapping from [EdgeNode] <-> either [UNDISCOVERED] or [DISCOVERED]
-   */
-  Map< int, int >       edgeStateMap;
-  
-  /**
-   * A mapping of [EdgeNode] (via their .id property) to another [EdgeNode]
-   */
-  Map< EdgeNode, EdgeNode >  parentMap;                
   
   /**
    * A FIFO style Queue used to store [DISCOVERED] graph vertices
    */
   Queue< EdgeNode > fifoQueue;
   
-  /**
-   * The [Graph] instance to be processed
-   */
-  Graph graph;
-  
   /// A delegate which follows the [BFSDelegate] interface
   BFSDelegate _delegate;
   
-  /// Start vertex
-  EdgeNode _start;
   /// Current vertex
   EdgeNode _a;    
   /// Successor vertex
   EdgeNode _b;    
   
-  BreadthFirstSearch( Graph this.graph, this._start ) {
+  BreadthFirstSearch( Graph aGraph, EdgeNode aStartNode ) : super( aGraph, aStartNode ) {
     resetGraph();
 //    twocolor();
 //    connectedComponents();
@@ -56,8 +31,7 @@ class BreadthFirstSearch implements BFSDelegate {
   
   /// Resets all book keeping properties of this BFS (fifoQueue, parentMap, edgeStateMap)
   void resetGraph() {
-    edgeStateMap = new Map< int, int >();
-    parentMap = new Map< EdgeNode, EdgeNode >();
+    super.resetGraph();
     fifoQueue = new Queue< EdgeNode >();
   }
   
@@ -161,9 +135,6 @@ class BreadthFirstSearch implements BFSDelegate {
     _delegate = prevDelegate;
     return new Map.from( twoColorHelper.colorMapping );
   }
-  
-  /// Returns true the node has been discovered
-  edgeNodeIsNotDiscovered( num x ) => ( edgeStateMap[ x ] != STATE_DISCOVERED && edgeStateMap[ x ] != STATE_PROCESSED );
   
 // BFSDELEGATE METHODS
   

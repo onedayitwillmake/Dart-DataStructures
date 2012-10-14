@@ -33,5 +33,6 @@ class GraphSearch {
     parentMap = new Map< EdgeNode, EdgeNode >();
   }
   
+  /// Returns true if this edge node has not yet been discovered
   edgeNodeIsNotDiscovered( num x ) => ( edgeStateMap[ x ] != STATE_DISCOVERED && edgeStateMap[ x ] != STATE_PROCESSED );
 }

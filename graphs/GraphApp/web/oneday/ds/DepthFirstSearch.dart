@@ -19,11 +19,6 @@ class DepthFirstSearch extends GraphSearch {
   /// A delegate which follows the [BFSDelegate] interface
   BFSDelegate _delegate;
   
-  /// Current vertex
-  EdgeNode _a;    
-  /// Successor vertex
-  EdgeNode _b;
-  
   /// Used to keep track of ancesstery 
   int time;
   bool isFinished;
@@ -47,38 +42,38 @@ class DepthFirstSearch extends GraphSearch {
   }
   
   
-  void execute( EdgeNode v ) {
+  void execute( EdgeNode a ) {
     if( isFinished ) return;
     
-    edgeStateMap[ v.a ] = STATE_DISCOVERED;
-    processVertexEarly( v );
+    edgeStateMap[ a.a ] = STATE_DISCOVERED;
+    processVertexEarly( a );
     
     time++;
-    entryTimes[ v.a ] = time;
+    entryTimes[ a.a ] = time;
     
+    // Successor vertex
+    EdgeNode b = null;
     
-    
-    EdgeNode p = v;
+    EdgeNode p = a;
     while( p != null ) {
-      print(p);
-      _b = graph.getNode( p.b );     
+      b = graph.getNode( p.b );     
       
-      if( edgeNodeIsNotDiscovered( _b.a ) ) {
-        parentMap[_b] = v;
-        processEdge( v, _b );
-        execute( _b );
-      } else if ( edgeStateMap[ _b.a ] != STATE_PROCESSED /*|| graph.isDirected */ ) {
-        processEdge( v, _b );
+      if( edgeNodeIsNotDiscovered( b.a ) ) {
+        parentMap[b] = a;
+        processEdge( a, b );
+        execute( b );
+      } else if ( edgeStateMap[ b.a ] != STATE_PROCESSED /*|| graph.isDirected */ ) {
+        processEdge( a, b );
       }   
       
       if( isFinished ) return;
       p = p.next;
     }
     
-    processVertexLate( v );
+    processVertexLate( a );
     time++;
-    exitTimes[ v.a ] = time;
-    edgeStateMap[ v.a ] = STATE_PROCESSED;
+    exitTimes[ a.a ] = time;
+    edgeStateMap[ a.a ] = STATE_PROCESSED;
   }
   
   processVertexEarly( EdgeNode a ) { 

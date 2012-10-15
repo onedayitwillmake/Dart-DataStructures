@@ -15,7 +15,7 @@ class GraphSearch implements Disposable {
   /**
    * A mapping of [EdgeNode] (via their .id property) to another [EdgeNode]
    */
-  Map< EdgeNode, EdgeNode >  parentMap;
+  Map< EdgeNode, EdgeNode >  parent;
   
   /**
    * The [Graph] instance to be processed
@@ -37,7 +37,7 @@ class GraphSearch implements Disposable {
   /// Clear memory
   void dispose() {
     edgeStateMap = null;
-    parentMap = null;
+    parent = null;
     _start = null;
     _goal = null;
     _delegate = null;
@@ -46,7 +46,7 @@ class GraphSearch implements Disposable {
   /// Resets all book keeping properties of this BFS (fifoQueue, parentMap, edgeStateMap)
   void resetGraph() {
     edgeStateMap = new Map< int, int >();
-    parentMap = new Map< EdgeNode, EdgeNode >();
+    parent = new Map< EdgeNode, EdgeNode >();
   }
   
   /// Returns the path from a start node, to an edge node. **IMPORTANT** Assumes the search ( [execute] ) has already been performed.
@@ -58,7 +58,7 @@ class GraphSearch implements Disposable {
       
       print("${start.a}");
     } else {
-      findPath( start, parentMap[end] ); // Recurisve
+      findPath( start, parent[end] ); // Recurisve
       path.addLast( end );
       
       print("${end.a}");
@@ -76,11 +76,11 @@ class GraphSearch implements Disposable {
  */
 interface GraphSearchDelegate {
   /// Called when an EdgeNode is popped from the queue
-  processVertexEarly( EdgeNode a );       
+  processVertexEarly( EdgeNode v );       
   
   /// Called when a new Edge connection is found
   processEdge( EdgeNode a, EdgeNode b);  
   
   /// Called when the vertex has been fully processed ( All recursively connected nodes discovered )
-  processVertexLate( EdgeNode a );       
+  processVertexLate( EdgeNode v );       
 }

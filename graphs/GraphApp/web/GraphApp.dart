@@ -10,7 +10,7 @@ void main() {
   context = canvas.context2d;
   
   // Load the sample data
-  var req = new HttpRequest.get("web/data/simpleGraph00.txt", onSuccess);
+  var req = new HttpRequest.get("web/data/simpleGraph01.txt", onSuccess);
 }
 
 onSuccess( HttpRequest req ) {

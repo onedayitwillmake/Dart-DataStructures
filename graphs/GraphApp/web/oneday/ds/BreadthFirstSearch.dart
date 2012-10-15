@@ -45,28 +45,28 @@ class BreadthFirstSearch extends GraphSearch implements GraphSearchDelegate {
     
     // Add the start node to the queue and set it to discovered
     fifoQueue.addFirst( _start );
-    edgeStateMap[ _start.id ] = STATE_DISCOVERED;
+    edgeStateMap[ _start.id ] = GraphSearch.STATE_DISCOVERED;
     
     while( !fifoQueue.isEmpty() ) {
       a = fifoQueue.removeFirst();
       
       processVertexEarly( a );
-      edgeStateMap[ a.a ] = STATE_PROCESSED;
+      edgeStateMap[ a.a ] = GraphSearch.STATE_PROCESSED;
       
       p = a;
       while( p != null ) {
         b = graph.getNode( p.b );
         
         // new edge
-        if( edgeStateMap[ b.a ] != STATE_PROCESSED || graph.isDirected ) {
+        if( edgeStateMap[ b.a ] != GraphSearch.STATE_PROCESSED || graph.isDirected ) {
           processEdge( a, b );
         }
         
         // Since this is a new connection, add it to the queue and store it's parent
         if( edgeNodeIsNotDiscovered( b.a ) ) {
           fifoQueue.addFirst( b );
-          edgeStateMap[ b.a ] = STATE_DISCOVERED;
-          parentMap[ b ] = a;
+          edgeStateMap[ b.a ] = GraphSearch.STATE_DISCOVERED;
+          parent[ b ] = a;
         }
         
         p = p.next;
@@ -118,9 +118,9 @@ class BreadthFirstSearch extends GraphSearch implements GraphSearchDelegate {
   }
   
 // GraphSearchDelegate METHODS
-  processVertexEarly( EdgeNode a ) { 
-    print("processing vertex ${a.a}");
-    if( _delegate != null ) _delegate.processVertexEarly(a);
+  processVertexEarly( EdgeNode v ) { 
+    print("processing vertex ${v.a}");
+    if( _delegate != null ) _delegate.processVertexEarly(v);
   }
   
   processEdge( EdgeNode a, EdgeNode b) {
@@ -128,8 +128,8 @@ class BreadthFirstSearch extends GraphSearch implements GraphSearchDelegate {
     if( _delegate != null ) _delegate.processEdge(a, b);
   }
   
-  processVertexLate( EdgeNode a ) {
-    if( _delegate != null ) _delegate.processVertexLate(a);
+  processVertexLate( EdgeNode v ) {
+    if( _delegate != null ) _delegate.processVertexLate(v);
   }
 }
 
@@ -164,6 +164,6 @@ class BiPartiteColorDelegate implements GraphSearchDelegate {
   }
   
   // The following two callbacks are unused
-  void processVertexEarly( EdgeNode a ) {}
-  void processVertexLate( EdgeNode a ) {}
+  void processVertexEarly( EdgeNode v ) {}
+  void processVertexLate( EdgeNode v ) {}
 }

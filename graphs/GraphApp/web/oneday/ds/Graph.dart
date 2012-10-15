@@ -23,7 +23,7 @@ class Graph {
    * Creates a new [Graph] instance. 
    * The graph can either be 'undirected' (two way) or 'directed' (one way)
    */
-  Graph( bool pIsDirected ) : isDirected = pIsDirected {
+  Graph( this.isDirected ) {
     num maxVerts = 1000;
     
     degree = new List<num>(maxVerts+1); 
@@ -41,16 +41,22 @@ class Graph {
     Graph g = new Graph( isDirected );
     List<String> edgeInfo = graphText.split("\n");
     
-    // First line should contain the number of vertices in the graph and nothing else
-    g.numVertices = parseInt( edgeInfo[0] );
-    edgeInfo.removeAt(0);   // remove the first line which contains only numvertices property
-    
+    bool hasFoundFirstLine = false;
     for( String pair in edgeInfo ) {
+      if( pair.startsWith("#") ) continue; // Comment
+      
+      // Found the first real line, it contains only one value which is the number of vertices in the graph
+      if( !hasFoundFirstLine ) {
+        g.numVertices = parseInt(pair);
+        hasFoundFirstLine = true;
+        continue;
+      }
+      
       List<String> nodeInfo = pair.split(",");
       if( nodeInfo.length != 2 ) break; // Bad line, abort!
       
       // Create an Edge (a,b)
-      g.insertEdge( parseInt(nodeInfo[0]), parseInt(nodeInfo[1]), false );
+      g.insertEdge( parseInt(nodeInfo[0]), parseInt(nodeInfo[1]), g.isDirected );
     }
     
     return g;

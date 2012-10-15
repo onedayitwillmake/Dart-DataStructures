@@ -61,16 +61,18 @@ class DepthFirstSearch extends GraphSearch {
     
     EdgeNode p = a;
     while( p != null ) {
-      b = graph.getNode( p.y );     
+      b = graph.getNode( p.y ); 
       
-      if( edgeNodeIsNotDiscovered( b.x ) ) {
-        parent[b] = a;
-        processEdge( a, b );
-        execute( b );
-      } else if ( edgeStateMap[ b.x ] != GraphSearch.STATE_PROCESSED /*|| graph.isDirected */ ) {
-        processEdge( a, b );
-      }   
-      
+      if( b != null ) { // b exist, do stuff with it
+        // edge a-b has not been discovered yet, process it for the first time and set it's parent to A
+        if( edgeNodeIsNotDiscovered( b.x ) ) {
+          parent[b] = a;
+          processEdge( a, b );
+          execute( b );
+        } else if ( edgeStateMap[ b.x ] != GraphSearch.STATE_PROCESSED || graph.isDirected ) { // It is a back-edge, process 
+          processEdge( a, b );
+        }
+      } 
       if( isFinished ) return;
       p = p.next;
     }
@@ -89,12 +91,10 @@ class DepthFirstSearch extends GraphSearch {
     // store the prev delegate, and set _delegate to a a new [ArticulationVerticesDelegate] instance
     GraphSearchDelegate prevDelegate = _delegate;
     
-    ArticulationVerticesDelegate articulationDelegate = new ArticulationVerticesDelegate( this.entryTimes, this.exitTimes, this.parent );
+    ArticulationVerticesDelegate articulationDelegate = new ArticulationVerticesDelegate( this );
     _delegate = articulationDelegate;
   
-    execute( start );
-    
-    articulationDelegate.onComplete();
+    execute( start ); 
   }
   
   int edgeClassification(EdgeNode a, EdgeNode b) {    
@@ -124,9 +124,48 @@ class DepthFirstSearch extends GraphSearch {
   }
 }
 
-/**
- *  Used by the [findArticultionVertices] function 
- */
+/// Given a Directed Acyclical Graph (DAG), it will topilogically sort the graph from left to right
+class TopilogicalSortDelegate implements GraphSearchDelegate, Disposable {
+  
+  /// A reference to the current stack maintained during the Topilogical sort
+  List< int > sorted = new List<int>();
+  
+  /// Reference to calling [DepthFirstSearch] instance we are running on
+  DepthFirstSearch _caller;
+   
+  TopilogicalSortDelegate( this._caller ) {
+    for( int i = 1; i <= this._caller.graph.numVertices; i++ ) {
+      if( _caller.edgeNodeIsNotDiscovered(i) ) {
+        _caller.execute( _caller.graph.getNode( i ) );
+      }
+    }
+    
+    print("Sorted:\n--\n${sorted}\n--\n");
+  }
+  
+  void dispose() {
+    sorted = null;
+    _caller = null;
+  }
+  
+  /// Called when an EdgeNode is popped from the queue
+  void processVertexEarly( EdgeNode v ) {
+    sorted.addLast( v.x );
+  }
+  
+  /// Called when a new Edge connection is found
+  void  processEdge( EdgeNode a, EdgeNode b) {
+    int edgeClass = _caller.edgeClassification(a, b);
+    if( edgeClass == EdgeNode.EDGE_TYPE_BACK ) {
+      print("Warning: directed cycle found, not a DAG");
+    }
+  }
+  
+  /// Called when the vertex has been fully processed ( All recursively connected nodes discovered )
+  void processVertexLate( EdgeNode v ){}
+}
+
+/** Used by the [findArticultionVertices] function  **/
 class ArticulationVerticesDelegate implements GraphSearchDelegate, Disposable {
   
   /// Keeps track of the current earliest reachable ancestor for an [EdgeNode]
@@ -134,21 +173,16 @@ class ArticulationVerticesDelegate implements GraphSearchDelegate, Disposable {
   
   /// DFS tree outdegree of an [EdgeNode] v
   Map< int, int > treeOutDegree = new Map<int, int>();
+ 
+  /// Reference to calling [DepthFirstSearch] instance we are running on
+  DepthFirstSearch _caller;
   
-  /// A mapping from [EdgeNode] to times when the node was entered
-  Map< int, int >       entryTimes;
+  ArticulationVerticesDelegate( this._caller );
   
-  /// A mapping from [EdgeNode] to times when the node was exited
-  Map< int, int >       exitTimes;
-  
-  /// A mapping of [EdgeNode] (via their .id property) to another [EdgeNode]
-  Map< EdgeNode, EdgeNode >  parent;
-  
-  ArticulationVerticesDelegate( this.entryTimes, this.exitTimes, this.parent );
   /// Clear memory
   void dispose() {
-    entryTimes = null;
-    exitTimes = null;
+    _caller = null;
+    
     treeOutDegree = null;
     reachableAncestor = null;
   }
@@ -159,11 +193,17 @@ class ArticulationVerticesDelegate implements GraphSearchDelegate, Disposable {
 
   /// [GraphSearchDelegate] Processes an edge connecting two [EdgeNode]
   processEdge( EdgeNode a, EdgeNode b) {
-    if( treeOutDegree[b.x] == null) treeOutDegree[b.x] = 0;
-    else treeOutDegree[b.x] += 1;
+    int edgeClass = _caller.edgeClassification(a, b);
     
-    if( entryTimes[b.x] == null || entryTimes[ b.x ] < entryTimes[ reachableAncestor[a.x] ] )
-      reachableAncestor[b.x] = a.x;
+    if( edgeClass == EdgeNode.EDGE_TYPE_TREE ) {
+      if( treeOutDegree[b.x] == null) treeOutDegree[b.x] = 0;
+      else treeOutDegree[b.x] += 1;
+    }
+    
+    if( edgeClass == EdgeNode.EDGE_TYPE_BACK && _caller.parent[a] != b) {
+      if( _caller.entryTimes[b.x] == null || _caller.entryTimes[ b.x ] < _caller.entryTimes[ reachableAncestor[a.x] ] )
+        reachableAncestor[b.x] = a.x;
+    }
   }
 
   /// [GraphSearchDelegate] Processes a vertex after all it's children have been discovered and explored
@@ -173,38 +213,32 @@ class ArticulationVerticesDelegate implements GraphSearchDelegate, Disposable {
     int time_parent;  // earliest reachable time for parentMap[a]
     
     // Check for root cutnode
-    if( parent[v] == null ) {
-      if( treeOutDegree[v.x] > 1 ) 
+    if( _caller.parent[v] == null ) {
+      if( treeOutDegree.containsKey(v.x) && treeOutDegree[v.x] > 1 ) 
         print("root articulation vertex: ${v.x}");
       
       return;
     }
     
     // Check for parent cutnode
-    root = ( parent[ parent[v] ] == null ); // is parent[v] the root?
-    if( (reachableAncestor[v.x] == parent[v].x ) && !root ) {
-      print("parent articulation vertex: ${parent[v]}");
+    root = ( _caller.parent[ _caller.parent[v] ] == null ); // is parent[v] the root?
+    if( (reachableAncestor[v.x] == _caller.parent[v].x ) && !root ) {
+      print("parent articulation vertex: ${_caller.parent[v]}");
     }
     
     // Check for bridge cutnode
     if( reachableAncestor[v.x] == v.x ) {
-      print("bridge articulation vertex: ${parent[v]}");
+      print("bridge articulation vertex: ${_caller.parent[v]}");
       
-//      if( treeOutDegree[v.x] > 0 ) { // Test if V is not a leaf
-//        print("bridge articulation vertex: ${v}");
-//      }
+      if( treeOutDegree.containsKey(v.x) && treeOutDegree[v.x] > 0 ) { // Test if V is not a leaf
+        print("bridge articulation vertex: ${v}");
+      }
     }
     
-    time_v = entryTimes[ reachableAncestor[v.x] ];
-    time_parent = entryTimes[ reachableAncestor[ parent[v].x ] ];
+    time_v = _caller.entryTimes[ reachableAncestor[v.x] ];
+    time_parent = _caller.entryTimes[ reachableAncestor[ _caller.parent[v].x ] ];
     
     if( time_v < time_parent )
-        reachableAncestor[ parent[v].x ] = reachableAncestor[v.x];
-  }
-
-  onComplete() {
-    entryTimes = null;
-    exitTimes = null;
-    parent = new Map< EdgeNode, EdgeNode>.from( parent );
+        reachableAncestor[ _caller.parent[v].x ] = reachableAncestor[v.x];
   }
 }

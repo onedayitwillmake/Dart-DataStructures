@@ -10,13 +10,19 @@ void main() {
   context = canvas.context2d;
   
   // Load the sample data
-  var req = new HttpRequest.get("web/data/simpleGraph01.txt", onSuccess);
+  var req = new HttpRequest.get("web/data/simpleGraph02.txt", onSuccess);
 }
 
 onSuccess( HttpRequest req ) {
-  aGraph = new Graph.fromSimpleText( req.responseText, false );
+  aGraph = new Graph.fromSimpleText( req.responseText, true );
   print(aGraph);
+//  
+//  print("--");
+//  print(  new Graph.fromSimpleText( req.responseText, false ) );
+//  
 //  var bfs = new BreadthFirstSearch( aGraph, aGraph.getNode(1) );
-  var dfs = new DepthFirstSearch( aGraph, aGraph.getNode(1) );
-  dfs.findArticulationVertices( aGraph.getNode(1) );
+//  var dfs = new DepthFirstSearch( aGraph, aGraph.getNode(1) );
+//  dfs.resetGraph();
+//  dfs.execute( aGraph.getNode(1)  );
+//  dfs.findArticulationVertices( aGraph.getNode(1) );
 }

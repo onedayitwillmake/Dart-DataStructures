@@ -56,12 +56,12 @@ class GraphSearch implements Disposable {
     if( start == end || end == null ) {
       path.addLast( start );
       
-      print("${start.a}");
+      print("${start.x}");
     } else {
       findPath( start, parent[end] ); // Recurisve
       path.addLast( end );
       
-      print("${end.a}");
+      print("${end.x}");
     }
     
     return path;

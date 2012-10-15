@@ -18,4 +18,5 @@ onSuccess( HttpRequest req ) {
   print(aGraph);
 //  var bfs = new BreadthFirstSearch( aGraph, aGraph.getNode(1) );
   var dfs = new DepthFirstSearch( aGraph, aGraph.getNode(1) );
+  dfs.findArticulationVertices( aGraph.getNode(1) );
 }

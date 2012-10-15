@@ -84,7 +84,7 @@ class Graph {
       output.add( "${i}:" );
       EdgeNode p = edges[i];
       while( p != null ) {
-        output.add(" ${p.b}");
+        output.add(" ${p.y}");
         p = p.next;
       }
     }

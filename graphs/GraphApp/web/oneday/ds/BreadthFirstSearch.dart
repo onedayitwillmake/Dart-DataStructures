@@ -51,21 +51,21 @@ class BreadthFirstSearch extends GraphSearch implements GraphSearchDelegate {
       a = fifoQueue.removeFirst();
       
       processVertexEarly( a );
-      edgeStateMap[ a.a ] = GraphSearch.STATE_PROCESSED;
+      edgeStateMap[ a.x ] = GraphSearch.STATE_PROCESSED;
       
       p = a;
       while( p != null ) {
-        b = graph.getNode( p.b );
+        b = graph.getNode( p.y );
         
         // new edge
-        if( edgeStateMap[ b.a ] != GraphSearch.STATE_PROCESSED || graph.isDirected ) {
+        if( edgeStateMap[ b.x ] != GraphSearch.STATE_PROCESSED || graph.isDirected ) {
           processEdge( a, b );
         }
         
         // Since this is a new connection, add it to the queue and store it's parent
-        if( edgeNodeIsNotDiscovered( b.a ) ) {
+        if( edgeNodeIsNotDiscovered( b.x ) ) {
           fifoQueue.addFirst( b );
-          edgeStateMap[ b.a ] = GraphSearch.STATE_DISCOVERED;
+          edgeStateMap[ b.x ] = GraphSearch.STATE_DISCOVERED;
           parent[ b ] = a;
         }
         
@@ -119,12 +119,12 @@ class BreadthFirstSearch extends GraphSearch implements GraphSearchDelegate {
   
 // GraphSearchDelegate METHODS
   processVertexEarly( EdgeNode v ) { 
-    print("processing vertex ${v.a}");
+    print("processing vertex ${v.x}");
     if( _delegate != null ) _delegate.processVertexEarly(v);
   }
   
   processEdge( EdgeNode a, EdgeNode b) {
-    print("\tFound edge [${a.a}, ${b.a}]");
+    print("\tFound edge [${a.x}, ${b.x}]");
     if( _delegate != null ) _delegate.processEdge(a, b);
   }
   
@@ -147,7 +147,7 @@ class BiPartiteColorDelegate implements GraphSearchDelegate {
   void processEdge( EdgeNode a, EdgeNode b) {
     if( colorMapping[a] == colorMapping[b] ) {
       isBiPartite = false;
-      print("Warning: not bipartite due to  (${a.a},${b.a})");
+      print("Warning: not bipartite due to  (${a.x},${b.x})");
     }
     
     colorMapping[b] = complement( colorMapping[a] );

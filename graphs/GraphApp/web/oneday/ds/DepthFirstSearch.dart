@@ -49,7 +49,7 @@ class DepthFirstSearch extends GraphSearch {
   void execute( EdgeNode a ) {
     
     if( isFinished ) return;
-   
+        
     edgeStateMap[ a.x ] = GraphSearch.STATE_DISCOVERED;
     processVertexEarly( a );
     
@@ -61,7 +61,7 @@ class DepthFirstSearch extends GraphSearch {
     
     EdgeNode p = a;
     while( p != null ) {
-      b = graph.getNode( p.y ); 
+      b = graph.getNode( p.y );
       
       if( b != null ) { // b exist, do stuff with it
         // edge a-b has not been discovered yet, process it for the first time and set it's parent to A
@@ -85,18 +85,32 @@ class DepthFirstSearch extends GraphSearch {
   }
   
   /// Returns a [ArticulationVerticesDelegate] instance
-  void findArticulationVertices([ EdgeNode start ]) {
+  void getArticulationVertices([ EdgeNode start ]) {
     resetGraph();
     
     // store the prev delegate, and set _delegate to a a new [ArticulationVerticesDelegate] instance
     GraphSearchDelegate prevDelegate = _delegate;
     
-    ArticulationVerticesDelegate articulationDelegate = new ArticulationVerticesDelegate( this );
+    ArticulationVerticesImpl articulationDelegate = new ArticulationVerticesImpl( this );
     _delegate = articulationDelegate;
   
     execute( start ); 
   }
   
+  void getTopilogicalSort() {
+    resetGraph();
+    
+    // store the prev delegate, and set _delegate to a a new [ArticulationVerticesDelegate] instance
+    GraphSearchDelegate prevDelegate = _delegate;
+    
+    TopilogicalSortImpl topilogicalSortDelegate = new TopilogicalSortImpl( this );
+    _delegate = topilogicalSortDelegate;
+    topilogicalSortDelegate.execute();
+  }
+  /**
+   * Determines the relationship of an edge between nodes a,b.
+   * All edges are of type [EdgeNode.EDGE_TYPE_TREE], [EdgeNode.EDGE_TYPE_BACK], [EdgeNode.EDGE_TYPE_FORWARD] or [EdgeNode.EDGE_TYPE_CROSS]
+   */
   int edgeClassification(EdgeNode a, EdgeNode b) {    
     if ( parent[b] == a) return EdgeNode.EDGE_TYPE_TREE;
     if ( edgeNodeIsNotDiscovered(a.x) == false && edgeStateMap[b.x] != GraphSearch.STATE_PROCESSED ) return EdgeNode.EDGE_TYPE_BACK;
@@ -125,7 +139,7 @@ class DepthFirstSearch extends GraphSearch {
 }
 
 /// Given a Directed Acyclical Graph (DAG), it will topilogically sort the graph from left to right
-class TopilogicalSortDelegate implements GraphSearchDelegate, Disposable {
+class TopilogicalSortImpl implements GraphSearchDelegate, Disposable {
   
   /// A reference to the current stack maintained during the Topilogical sort
   List< int > sorted = new List<int>();
@@ -133,7 +147,15 @@ class TopilogicalSortDelegate implements GraphSearchDelegate, Disposable {
   /// Reference to calling [DepthFirstSearch] instance we are running on
   DepthFirstSearch _caller;
    
-  TopilogicalSortDelegate( this._caller ) {
+  TopilogicalSortImpl( this._caller );
+  
+  void dispose() {
+    sorted = null;
+    _caller = null;
+  }
+  
+  /// Performs the topilogical sort
+  void execute() {
     for( int i = 1; i <= this._caller.graph.numVertices; i++ ) {
       if( _caller.edgeNodeIsNotDiscovered(i) ) {
         _caller.execute( _caller.graph.getNode( i ) );
@@ -141,11 +163,6 @@ class TopilogicalSortDelegate implements GraphSearchDelegate, Disposable {
     }
     
     print("Sorted:\n--\n${sorted}\n--\n");
-  }
-  
-  void dispose() {
-    sorted = null;
-    _caller = null;
   }
   
   /// Called when an EdgeNode is popped from the queue
@@ -166,7 +183,7 @@ class TopilogicalSortDelegate implements GraphSearchDelegate, Disposable {
 }
 
 /** Used by the [findArticultionVertices] function  **/
-class ArticulationVerticesDelegate implements GraphSearchDelegate, Disposable {
+class ArticulationVerticesImpl implements GraphSearchDelegate, Disposable {
   
   /// Keeps track of the current earliest reachable ancestor for an [EdgeNode]
   Map< int, int > reachableAncestor = new Map< int, int >();
@@ -177,7 +194,7 @@ class ArticulationVerticesDelegate implements GraphSearchDelegate, Disposable {
   /// Reference to calling [DepthFirstSearch] instance we are running on
   DepthFirstSearch _caller;
   
-  ArticulationVerticesDelegate( this._caller );
+  ArticulationVerticesImpl( this._caller );
   
   /// Clear memory
   void dispose() {

@@ -96,7 +96,7 @@ class BreadthFirstSearch extends GraphSearch implements GraphSearchDelegate {
   /// Returns a mapping of [EdgeNode] to COLOR_RED | COLORbLACK if the graph is **bipartite**
   Map< EdgeNode, int > twocolor( ) {
     
-    BiPartiteColorDelegate twoColorHelper = new BiPartiteColorDelegate();
+    BiPartiteColorImpl twoColorHelper = new BiPartiteColorImpl();
     
     // Store the current delegate in a temporary variable
     GraphSearchDelegate prevDelegate = _delegate;
@@ -136,7 +136,7 @@ class BreadthFirstSearch extends GraphSearch implements GraphSearchDelegate {
 /**
  * A simple GraphSearchDelegate which is used by the twocolor function to create a bipartite graph coloring
  */
-class BiPartiteColorDelegate implements GraphSearchDelegate {
+class BiPartiteColorImpl implements GraphSearchDelegate {
   /// Whether this graph is is bipartite or not
   bool isBiPartite = true;
   

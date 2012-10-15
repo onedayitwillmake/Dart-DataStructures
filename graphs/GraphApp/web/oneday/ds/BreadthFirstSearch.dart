@@ -56,19 +56,19 @@ class BreadthFirstSearch extends GraphSearch implements GraphSearchDelegate {
       p = a;
       while( p != null ) {
         b = graph.getNode( p.y );
-        
-        // new edge
-        if( edgeStateMap[ b.x ] != GraphSearch.STATE_PROCESSED || graph.isDirected ) {
-          processEdge( a, b );
+        if( b != null ) {
+          // new edge
+          if( (edgeStateMap.containsKey(b.x) && edgeStateMap[ b.x ] != GraphSearch.STATE_PROCESSED) || graph.isDirected ) {
+            processEdge( a, b );
+          }
+          
+          // Since this is a new connection, add it to the queue and store it's parent
+          if( edgeNodeIsNotDiscovered( b.x ) ) {
+            fifoQueue.addFirst( b );
+            edgeStateMap[ b.x ] = GraphSearch.STATE_DISCOVERED;
+            parent[ b ] = a;
+          }
         }
-        
-        // Since this is a new connection, add it to the queue and store it's parent
-        if( edgeNodeIsNotDiscovered( b.x ) ) {
-          fifoQueue.addFirst( b );
-          edgeStateMap[ b.x ] = GraphSearch.STATE_DISCOVERED;
-          parent[ b ] = a;
-        }
-        
         p = p.next;
       }
       processVertexLate( a );

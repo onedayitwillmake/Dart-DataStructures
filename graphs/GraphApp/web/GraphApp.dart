@@ -20,7 +20,8 @@ onSuccess( HttpRequest req ) {
 //  print("--");
 //  print(  new Graph.fromSimpleText( req.responseText, false ) );
 //  
-//  var bfs = new BreadthFirstSearch( aGraph, aGraph.getNode(1) );
+  var bfs = new BreadthFirstSearch( aGraph, aGraph.getNode(1) );
+  bfs.execute();
 //  var dfs = new DepthFirstSearch( aGraph, aGraph.getNode(1) );
 //  dfs.resetGraph();
 //  dfs.execute( aGraph.getNode(1)  );

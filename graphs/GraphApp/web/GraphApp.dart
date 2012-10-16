@@ -2,7 +2,7 @@
 #import('oneday/ds/ds.dart');
 #import('oneday/geom/geom.dart');
 
-Graph aGraph;
+//Graph aGraph;
 CanvasRenderingContext2D context;
 
 void main() { 
@@ -10,22 +10,24 @@ void main() {
   context = canvas.context2d;
   
   // Load the sample data
-  var req = new HttpRequest.get("web/data/simpleGraph02.txt", onSuccess);
+  var req = new HttpRequest.get("web/data/simpleGraph00.txt", onSuccess);
 }
 
 onSuccess( HttpRequest req ) {
-  aGraph = new Graph.fromSimpleText( req.responseText, true );
-  print(aGraph);
+//  aGraph = new Graph.fromSimpleText( req.responseText, true );
+  
+//  GGraph aGraph = new GGraph.fromSimpleText( req.responseText, false );
+//  print(aGraph);
 //  
 //  print("--");
 //  print(  new Graph.fromSimpleText( req.responseText, false ) );
 //  
 //  var bfs = new BreadthFirstSearch( aGraph, aGraph.getNode(1) );
 //  bfs.execute();
-  var dfs = new DepthFirstSearch( aGraph, aGraph.getNode(1) );
+//  var dfs = new DepthFirstSearch( aGraph, aGraph.getNode(1) );
 //  dfs.getTopilogicalSort();
 //  dfs.resetGraph();
 //  dfs.execute( aGraph.getNode(1)  );
-  dfs.getArticulationVertices( aGraph.getNode(1) );
+//  dfs.getArticulationVertices( aGraph.getNode(1) );
   
 }

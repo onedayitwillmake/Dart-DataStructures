@@ -98,5 +98,8 @@ class GGraph {
   }
   
   /// Returns a node for a given id
-  GGraphNode getNode(id) => nodes[id];
+  GGraphNode getNode( int id) => nodes[id];
+  
+  /// Returns the first [GGraphEdge] for a given [GGraphNode] id
+  GGraphEdge getEdge( int id) => edges[id];
 }

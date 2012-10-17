@@ -79,7 +79,7 @@ interface GraphSearchDelegate {
   processVertexEarly( EdgeNode v );       
   
   /// Called when a new Edge connection is found
-  processEdge( EdgeNode a, EdgeNode b);  
+  processEdge( EdgeNode u, EdgeNode v);  
   
   /// Called when the vertex has been fully processed ( All recursively connected nodes discovered )
   processVertexLate( EdgeNode v );       

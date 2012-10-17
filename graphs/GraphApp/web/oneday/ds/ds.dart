@@ -13,3 +13,5 @@
 #source("g_graph_node.dart");
 #source("g_graph_edge.dart");
 #source("g_graph.dart");
+#source("g_graph_search.dart");
+#source("g_breadth_first_search.dart");

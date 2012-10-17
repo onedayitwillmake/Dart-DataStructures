@@ -16,7 +16,10 @@ void main() {
 onSuccess( HttpRequest req ) {
 //  aGraph = new Graph.fromSimpleText( req.responseText, true );
   
-//  GGraph aGraph = new GGraph.fromSimpleText( req.responseText, false );
+  GGraph aGraph = new GGraph.fromSimpleText( req.responseText, false );
+  var bfs = new GBreadthFirstSearch( aGraph, aGraph.getNode(1), null );
+  bfs.resetGraph();
+  bfs.execute();
 //  print(aGraph);
 //  
 //  print("--");

@@ -3,7 +3,7 @@
  * Provides a simple 2D Vec2 class
  * @author Mario Gonzalez | onedayitwillmake.com
  */ 
-class Vec2 {
+class Vec2 implements IQuadStorable {
   num x;
   num y;
    
@@ -40,6 +40,10 @@ class Vec2 {
     num dy = y - p.y;
     return dx*dx + dy*dy;
   }
+  
+  /// Returns true if this [Vec2] is inside of the [Rect]   
+  bool isInRect( Rect r ) => r.containsPoint( this );
+  bool intersectsRect( Rect r ) => r.containsPoint( this );
   
   /// Returns the cross-product (scalar value) of this and another [Vector]
   num cross(Vec2 v) => x*v.y - y*v.x;

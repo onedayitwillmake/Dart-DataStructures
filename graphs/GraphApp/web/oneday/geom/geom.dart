@@ -5,3 +5,5 @@
 
 #source("Vec2.dart");
 #source("Circle.dart");
+#source("rect.dart");
+#source('quad_tree.dart');

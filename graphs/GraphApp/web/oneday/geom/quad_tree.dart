@@ -2,11 +2,19 @@
  * A quadtree datastructure, for efficient spatial subdivsion
  */
 class QuadTree {
+  /// All objects contained in the [QuadTree]
   Map< IQuadStorable, QuadTreeObject > wrappedDictionary = new Map< IQuadStorable, QuadTreeObject >();
+  
+  /// Root node of the [QuadTree]
   QuadTreeNode quadTreeRoot;
   
-  QuadTree( int x, int y, int size ) {
-    quadTreeRoot = new QuadTreeNode.fromExtents(null, x,y,size);
+  /// Maximum number of objects we will contain before splitting
+  int maxObjectsPerNode = 2;
+  
+  int maxDepth = 4;
+  
+  QuadTree( int x, int y, int width, int height ) {
+    quadTreeRoot = new QuadTreeNode.fromExtents(null, x,y, width, height );
   }
   
   /// Adds an item
@@ -64,8 +72,8 @@ class QuadTreeNode {
   QuadTreeNode childBL;
   
   /// Creates a new [QuadTreeNode] from x,y topleft position that is 'width' in size 
-  factory QuadTreeNode.fromExtents( QuadTreeNode parent, int x, int y, int size ) {
-    return new QuadTreeNode( parent, new Rect(x,y, size, size) );
+  factory QuadTreeNode.fromExtents( QuadTreeNode parent, int x, int y, int width, int height ) {
+    return new QuadTreeNode( parent, new Rect(x,y, width, height) );
   }
   
   QuadTreeNode( this.parent, this.rect );

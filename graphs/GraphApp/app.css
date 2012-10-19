@@ -14,8 +14,6 @@ p {
 }
 
 #container {
-  width: 800px;
-  height: 500px;
   position: relative;
   background-color: #303030;
 }

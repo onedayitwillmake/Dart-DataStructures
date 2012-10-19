@@ -2,7 +2,7 @@
  * A quadtree datastructure, for efficient spatial subdivsion
  */
 class QuadTree {
-  Map< IQuadStorable, QuadTreeObject > wrappedDictionary;
+  Map< IQuadStorable, QuadTreeObject > wrappedDictionary = new Map< IQuadStorable, QuadTreeObject >();
   QuadTreeNode quadTreeRoot;
   
   QuadTree( int x, int y, int size ) {
@@ -85,7 +85,9 @@ class QuadTreeNode {
     if( objects != null ) {
       int removeIndex = objects.indexOf(item, 0);
       if( removeIndex >= 0 ) {
-        objects[removeIndex] = objects.removeLast();
+        // Place the current last one at the index of the one we're removing
+        objects[removeIndex] = objects.last();
+        objects.removeLast();
       }
     }
   }

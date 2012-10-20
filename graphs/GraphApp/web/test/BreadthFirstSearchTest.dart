@@ -1,13 +1,13 @@
-#import('dart:html');
-#import('../../packages/unittest/unittest.dart');
-#import('../oneday/ds/ds.dart');
-#import('../oneday/geom/geom.dart');
+import 'dart:html';
+import '../../packages/unittest/unittest.dart';
+import '../oneday/ds/ds.dart';
+import '../oneday/geom/geom.dart';
 
 /**
  * test('getDirectory', () {
   fs.root.getDirectory('nonexistent', flags:{},
     successCallback:
-        expectAsync1((e) => 
+        expectAsync1((e) =>
             expect(false, 'Should not be reached'), count:0),
     errorCallback:
         expectAsync1((e) =>

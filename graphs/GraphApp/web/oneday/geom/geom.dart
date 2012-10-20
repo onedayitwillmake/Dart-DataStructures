@@ -1,9 +1,9 @@
-#library("geom");
+library geom;
 
-#import("dart:math", prefix:'Math');
-#import('dart:html');
+import "dart:math" as Math;
+import 'dart:html' show CanvasRenderingContext2D;
 
-#source("Vec2.dart");
-#source("Circle.dart");
-#source("rect.dart");
-#source('quad_tree.dart');
+part 'Vec2.dart';
+part 'Circle.dart';
+part "rect.dart";
+part 'quad_tree.dart';

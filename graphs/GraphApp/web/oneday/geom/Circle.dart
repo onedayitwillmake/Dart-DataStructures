@@ -1,18 +1,20 @@
+part of geom;
+
 class Circle extends Vec2 {
   /// Radius of this [Circle]
   num radius;
-  
+
   /// PI * 2
   const TAU = Math.PI * 2;
-  
+
   /// Creates a new [Circle] with [radius]
   Circle( num pX, num pY, this.radius) : super(pX, pY);
-  
+
   /// Returns whether a point is contained within [this] [Circle]
   bool containsPoint( Vec2 p ) => ( distanceSquared(p) <= radius*radius );
-  
+
   /// Returns [(x,y,radius)] string
-  String toString() => ('X:(${x.toStringAsFixed(3)}, Y:${y.toStringAsFixed(3)}, R:${this.radius})'); 
+  String toString() => ('X:(${x.toStringAsFixed(3)}, Y:${y.toStringAsFixed(3)}, R:${this.radius})');
 }
 
 /**
@@ -22,7 +24,7 @@ class DrawableCircle extends Circle {
   String color;
   String label;
   DrawableCircle( num pX, num pY, num pRadius, this.color, [this.label] ) : super(pX, pY, pRadius );
-  
+
   /// Draws [this] circle into the provided [CanvasRenderingContext2D]
   void draw( CanvasRenderingContext2D context ) {
     context.save();

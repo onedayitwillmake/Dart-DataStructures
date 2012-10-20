@@ -1,17 +1,17 @@
-#library("ds");
+library ds;
 
-#import("dart:math");
-#import("../geom/geom.dart");
+import "dart:math";
+import "../geom/geom.dart";
 
-#source("../disposable.dart");
-#source("Graph.dart");
-#source("EdgeNode.dart");
-#source("GraphSearch.dart");
-#source("BreadthFirstSearch.dart");
-#source("DepthFirstSearch.dart");
+part "../disposable.dart";
+part "Graph.dart";
+part "EdgeNode.dart";
+part "GraphSearch.dart";
+part "BreadthFirstSearch.dart";
+part "DepthFirstSearch.dart";
 
-#source("g_graph_node.dart");
-#source("g_graph_edge.dart");
-#source("g_graph.dart");
-#source("g_graph_search.dart");
-#source("g_breadth_first_search.dart");
+part "g_graph_node.dart";
+part "g_graph_edge.dart";
+part "g_graph.dart";
+part "g_graph_search.dart";
+part "g_breadth_first_search.dart";

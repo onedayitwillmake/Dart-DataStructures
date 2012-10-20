@@ -1,6 +1,6 @@
-#library("layout.dart");
+library layout;
 
-#import("../ds.dart");
-#import("../../geom/geom.dart");
+import "../ds.dart";
+import "../../geom/geom.dart";
 
-#source("force_directed_graph.dart");
+part "force_directed_graph.dart";

@@ -1,7 +1,7 @@
 import 'dart:html';
-import 'oneday/geom/geom.dart' as geom;
-import 'oneday/ds/ds.dart';
-import 'oneday/ds/layout/layout.dart';
+import '../oneday/geom/geom.dart' as geom;
+import '../oneday/ds/ds.dart';
+import '../oneday/ds/layout/layout.dart';
 
 GGraph graph;
 ForceDirectedGraph forceGraph;

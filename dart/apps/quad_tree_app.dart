@@ -1,8 +1,6 @@
 import 'dart:html';
 import 'dart:math' as Math;
-import 'oneday/geom/geom.dart' as geom;
-//import 'oneday/ds/ds.dart';
-//import 'oneday/ds/layout/layout.dart';
+import '../oneday/geom/geom.dart' as geom;
 
 //GGraph graph;
 //ForceDirectedGraph forceGraph;
@@ -19,12 +17,19 @@ class SimpleObject implements geom.IQuadStorable {
   bool isInRect( geom.Rect r ) => position.isInRect(r);
   bool intersectsRect( geom.Rect r ) => position.intersectsRect(r);
 }
+
+
 void main() {
   CanvasElement canvas = query("#container");
   context = canvas.context2d;
   document.on.click.add(onMouseClick);
 
-  qt = new geom.QuadTree(0, 0, context.canvas.width, context.canvas.height, 4 );
+  qt = new geom.QuadTree(0, 0, context.canvas.width, context.canvas.height, 1);
+  var rand = new Math.Random( new Date.now().millisecondsSinceEpoch );
+  for( int i = 0; i < 100; i++ ) {
+    var so = new SimpleObject( rand.nextDouble() * context.canvas.width, rand.nextDouble() * context.canvas.height );
+    qt.add( so );
+  }
 
   start();
 }
@@ -52,22 +57,14 @@ void onMouseClick( MouseEvent e) {
 }
 
 void draw( num delta ) {
-
-
-
-//  var rand = new Math.Random( new Date.now().millisecondsSinceEpoch );
-//  for( int i = 0; i < 10; i++ ) {
-//    var so = new SimpleObject( rand.nextDouble() * context.canvas.width, rand.nextDouble() * context.canvas.height );
-//    qt.add( so );
-//  }
-
   context.clearRect(0, 0, context.canvas.width, context.canvas.height );
   context.lineWidth = 0.25;
   context.strokeStyle = "#FFFFFF";
   context.strokeStyle = "";
   context.lineWidth = 0;
 
-
+ 
+  
 //  print(qt.wrappedDictionary.length);
   context.beginPath();
   qt.wrappedDictionary.forEach(void f( geom.IQuadStorable key, value){

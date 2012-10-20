@@ -1,8 +1,6 @@
 part of geom;
 
-/**
- * A quadtree datastructure, for efficient spatial subdivsion
- */
+/// A quadtree datastructure, for efficient spatial subdivsion
 class QuadTree {
   /// All objects contained in the [QuadTree]
   Map< IQuadStorable, QuadTreeObject > wrappedDictionary = new Map< IQuadStorable, QuadTreeObject >();
@@ -20,18 +18,18 @@ class QuadTree {
     quadTreeRoot = new QuadTreeNode.fromExtents(null, x,y, width, height, maxObjectsPerNode, maxDepth );
   }
 
-  /// Adds an item
-  add(IQuadStorable item) {
+  /// Adds a node
+  void add(IQuadStorable item) {
     QuadTreeObject wrappedObject = new QuadTreeObject(item);
     wrappedDictionary[item] = wrappedObject;
-    quadTreeRoot._insert( wrappedObject );
+    quadTreeRoot.insert( wrappedObject );
   }
 
-  /// Removes an item
+  /// Removes an node
   bool remove(IQuadStorable item) {
     var removedItem = wrappedDictionary.remove( item );
     if( removedItem != null ) { // Map.remove only returns the object if it was removed ( thus existed )
-      quadTreeRoot._delete( wrappedDictionary[item], true );
+      quadTreeRoot.delete( wrappedDictionary[item], true );
       return true;
     }
 
@@ -41,7 +39,7 @@ class QuadTree {
   /// Removes all items
   clear() {
     wrappedDictionary.clear();
-    quadTreeRoot._clear();
+    quadTreeRoot.clear();
   }
 
   /// Determins whether the [QuadTree] contains a specific value
@@ -54,55 +52,60 @@ class QuadTree {
   int count() => wrappedDictionary.length;
 }
 
+/// The actual QuadTree recursive data-structure
 class QuadTreeNode {
 
   /// Maximum number of objects we will contain before splitting
-  int maxObjectsPerNode;
+  int _maxObjectsPerNode;
 
   /// Maximum depth of the tree, this superceedes maxObjectsPerNode
-  int maxDepth;
+  int _maxDepth;
 
   /// The objects in this [QuadTreeNode]
-  List< QuadTreeObject > objects;
+  List< QuadTreeObject > _objects;
 
+  /// Parent of this [QuadTreeNode]
+  QuadTreeNode _parent;
+  
   /// Area this [QuadTreeNode] represents
   Rect rect;
 
-  /// Parent of this [QuadTreeNode]
-  QuadTreeNode parent;
-
-  // Children in clockwise order
+  /// TopLeft [QuadTreeNode]
   QuadTreeNode childTL;
+  /// TopRight [QuadTreeNode]
   QuadTreeNode childTR;
+  /// BottomRight[QuadTreeNode]
   QuadTreeNode childBR;
+  /// BottomLeft [QuadTreeNode]
   QuadTreeNode childBL;
 
   /// Creates a new [QuadTreeNode] from x,y topleft position that is 'width' in size
   factory QuadTreeNode.fromExtents( QuadTreeNode parent, int x, int y, int width, int height, pMaxObjectsPerNode, pMaxDepth ) {
     return new QuadTreeNode( parent, new Rect(x,y, width, height), pMaxObjectsPerNode, pMaxDepth );
   }
+  
+  /// Constructor
+  QuadTreeNode( this._parent, this.rect, this._maxObjectsPerNode, this._maxDepth );
 
-  QuadTreeNode( this.parent, this.rect, this.maxObjectsPerNode, this.maxDepth );
 
-
-  /// Adds an item to the object list
+  /// Adds an item to the object list, this should only be called by 'insert'
   void _add( QuadTreeObject item ) {
-    if( objects == null ) {
-      objects = new List< QuadTreeObject >();
+    if( _objects == null ) {
+      _objects = new List< QuadTreeObject >();
     }
 
     item.owner = this;
-    objects.addLast( item );
+    _objects.addLast( item );
   }
 
-  /// Removes an item from the object list
+  /// Removes an item from the object list, this should only be called by 'delete'
   void _remove( QuadTreeObject item ) {
-    if( objects != null ) {
-      int removeIndex = objects.indexOf(item, 0);
+    if( _objects != null ) {
+      int removeIndex = _objects.indexOf(item, 0);
       if( removeIndex >= 0 ) {
         // Place the current last one at the index of the one we're removing
-        objects[removeIndex] = objects.last();
-        objects.removeLast();
+        _objects[removeIndex] = _objects.last();
+        _objects.removeLast();
       }
     }
   }
@@ -112,7 +115,7 @@ class QuadTreeNode {
     int count = 0;
 
     // Add any objects we contain
-    if( objects != null ) count += objects.length;
+    if( _objects != null ) count += _objects.length;
 
     // Add any objects our children contain
     if( childTL != null ) {
@@ -130,18 +133,18 @@ class QuadTreeNode {
     Vec2 size = new Vec2( rect.width /2, rect.height / 2 );
     Vec2 mid = new Vec2( rect.x + size.x, rect.y + size.y );
 
-    childTL = new QuadTreeNode( this, new Rect( rect.left(), rect.top(), size.x, size.y ), maxObjectsPerNode, maxDepth );
-    childTR = new QuadTreeNode( this, new Rect( mid.x, rect.top(), size.x, size.y ), maxObjectsPerNode, maxDepth );
-    childBL = new QuadTreeNode( this, new Rect( rect.left(), mid.y, size.x, size.y ), maxObjectsPerNode, maxDepth );
-    childBR = new QuadTreeNode( this, new Rect( mid.x, mid.y, size.x, size.y ), maxObjectsPerNode, maxDepth );
+    childTL = new QuadTreeNode( this, new Rect( rect.left(), rect.top(), size.x, size.y ), _maxObjectsPerNode, _maxDepth );
+    childTR = new QuadTreeNode( this, new Rect( mid.x, rect.top(), size.x, size.y ), _maxObjectsPerNode, _maxDepth );
+    childBL = new QuadTreeNode( this, new Rect( rect.left(), mid.y, size.x, size.y ), _maxObjectsPerNode, _maxDepth );
+    childBR = new QuadTreeNode( this, new Rect( mid.x, mid.y, size.x, size.y ), _maxObjectsPerNode, _maxDepth );
 
     // If they're completely contained by the quad, bump objects down
-    for( int i = 0; i < objects.length; i++ ) {
-      QuadTreeObject item = objects[i];
+    for( int i = 0; i < _objects.length; i++ ) {
+      QuadTreeObject item = _objects[i];
 
       QuadTreeNode destTree = _getDestinationTree( item );
       if( destTree != this ) {
-        destTree._insert(item );
+        destTree.insert(item );
         _remove( item );
         i--;
       }
@@ -165,6 +168,7 @@ class QuadTreeNode {
     return destTree;
   }
 
+  /// Relocate an item after checking if it is no longer contained within our [Rect]
   void _relocate(  QuadTreeObject  item ) {
 
     // Still inside our parent?
@@ -176,21 +180,22 @@ class QuadTreeNode {
         if( item.owner != destTree ) {
           // Delete the item from this quad and add it to our child
           QuadTreeNode formerOwner = item.owner;
-          _delete( item, false );
-          destTree._insert( item );
+          delete( item, false );
+          destTree.insert( item );
 
           // Cleanup ourselves
           formerOwner._cleanUpwards();
         }
       }
     } else { // We don't fit - try to move to the parent
-      if( parent != null ) {
-        parent._relocate( item );
+      if( _parent != null ) {
+        _parent._relocate( item );
       }
     }
   }
 
 
+  /// An item has been removed ( or relocated to another node in the tree ), recursively clean up
   void _cleanUpwards() {
     if( childTL != null ) {
 
@@ -205,27 +210,28 @@ class QuadTreeNode {
         childBR = null;
 
         // We don't have any objects, have our parent call clean on itself
-        if( parent != null && count() == 0 ) {
-          parent._cleanUpwards();
+        if( _parent != null && count() == 0 ) {
+          _parent._cleanUpwards();
         }
       }
-    } else if( parent != null && count() == 0 ) { // This object itself could be one of 4 empty leaf nodes, tell parent to clean up
-      parent._cleanUpwards();
+    } else if( _parent != null && count() == 0 ) { // This object itself could be one of 4 empty leaf nodes, tell parent to clean up
+      _parent._cleanUpwards();
     }
   }
 
 
-  _clear() {
+  /// Recursively removes all objects
+  clear() {
     if( childTL != null ) {
-      childTL._clear();
-      childTR._clear();
-      childBL._clear();
-      childBR._clear();
+      childTL.clear();
+      childTR.clear();
+      childBL.clear();
+      childBR.clear();
     }
 
-    if( objects != null ) {
-      objects.clear();
-      objects = null;
+    if( _objects != null ) {
+      _objects.clear();
+      _objects = null;
     }
 
     childTL = null;
@@ -238,7 +244,7 @@ class QuadTreeNode {
    * Deletes an item from the [QuadTreeNode].
    * If the object is removed causes this quad to have no objects in it's children, it's children will be removed as well
    */
-  _delete(QuadTreeObject item, bool clean) {
+  delete(QuadTreeObject item, bool clean) {
     if( item.owner != null ) {
       if( item.owner == this ) {
         _remove( item );
@@ -247,17 +253,17 @@ class QuadTreeNode {
           _cleanUpwards();
         }
       } else {
-        item.owner._delete( item, clean );
+        item.owner.delete( item, clean );
       }
     }
   }
 
   /// Insert an item into the [QuadTreeNode].
-  void _insert(QuadTreeObject item) {
+  void insert(QuadTreeObject item) {
      // If this quad doesn't contain the items rect don't do anything unless we're the rootquad
     if( ! item.data.isInRect( rect ) ) {
-      assert( parent == null );
-      if( parent == null ) {
+      assert( _parent == null );
+      if( _parent == null ) {
         _add( item );
       } else {
         return;
@@ -265,7 +271,7 @@ class QuadTreeNode {
     }
 
     // There is room to add this object
-    if( objects == null || ( childTL == null && objects.length + 1 <= maxObjectsPerNode) ) {
+    if( _objects == null || ( childTL == null && _objects.length + 1 <= _maxObjectsPerNode) ) {
       _add( item );
     } else {
       /// Create quads and bump existing objects down
@@ -277,7 +283,7 @@ class QuadTreeNode {
       if( destTree == this ) {
        _add( item );
       } else {
-        destTree._insert( item );
+        destTree.insert( item );
       }
     }
   }
@@ -291,21 +297,23 @@ class QuadTreeNode {
     }
   }
 
-  /// Returns aoo the objects in this tree that are contained within the supplied [Rect]
+  /// Returns all the objects in this tree that are contained within the supplied [Rect]
   List< IQuadStorable > _getObjects( Rect searchRect ) {
     List< IQuadStorable > results = new List< IQuadStorable >();
     _getObjectsImpl( searchRect, results );
     return results;
   }
 
+  /// Implementation which recursively retrieves all objects in it's children, if searchRect is either contained or intersects our [Rect]
   void _getObjectsImpl( Rect searchRect, List< IQuadStorable > results ) {
     if( results == null ) return;
+    
+    // We fully contain this rectangle, simply return whatever we have
     if( searchRect.containsRect( rect ) ) {
       _getAllObjects( results );
     } else if ( searchRect.intersectsRect( rect ) ) { // Add objects that intersect with the searchRect
-
-      if( objects != null ) { // We have an object list - run through each one
-        objects.forEach(void f( QuadTreeObject item ){
+      if( _objects != null ) { // We have an object list - run through each one
+        _objects.forEach(void f( QuadTreeObject item ){
           if( item.data.intersectsRect( searchRect ) ) {
             results.addLast( item.data );
           }
@@ -322,9 +330,10 @@ class QuadTreeNode {
     }
   }
 
+  /// Implemenation which is called blindly returns all the objects recursively stored in this node
   void _getAllObjects( List< IQuadStorable > results ) {
-    if( objects != null ) { // We have an object list - run through each one
-      objects.forEach(void f( QuadTreeObject item ) => results.addLast( item.data ) );
+    if( _objects != null ) { // We have an object list - run through each one
+      _objects.forEach(void f( QuadTreeObject item ) => results.addLast( item.data ) );
     }
 
     if( childTL != null ) {
@@ -334,24 +343,19 @@ class QuadTreeNode {
       childBR._getAllObjects( results );
     }
   }
-
-  topLeftChild() => childTL;
-  topRightChild() => childTR;
-  bottomRightChild() => childBR;
-  bottomLeftChild() => childBL;
-
+  
+  /// The number of objects in this [QuadTreeNode]
   count() => _objectCount();
 
   /// Returns true if this is an empty leaf node
   isEmptyLeaf() => _objectCount() == 0 && childTL == null;
 
 }
-
+/// Used by the [QuadTree] to store an object with a reference to it's parent
 class QuadTreeObject {
-
   QuadTreeNode  owner;
   IQuadStorable data;
-
+  
   QuadTreeObject( this.data );
 
   /// Clear memory for GC
@@ -361,7 +365,8 @@ class QuadTreeObject {
   }
 }
 
-interface IQuadStorable {
+/// Implement this interface to be able to place it into the [QuadTree]
+abstract class IQuadStorable {
   bool isInRect( Rect r );
   bool intersectsRect( Rect r );
 }

@@ -22,8 +22,9 @@ class SimpleObject implements geom.IQuadStorable {
 void main() { 
   CanvasElement canvas = query("#container");
   context = canvas.context2d;
+  document.on.click.add(onMouseClick);
   
-
+  qt = new geom.QuadTree(0, 0, context.canvas.width, context.canvas.height, 4 );
   
   start();
 }
@@ -46,17 +47,19 @@ void update( int time ) {
   window.requestAnimationFrame( update );
 }
 
-void draw( num delta ) {
-  
-  
+void onMouseClick( MouseEvent e) {
+  qt.add(new SimpleObject( e.clientX, e.clientY-100) );
+}
 
-  qt = new geom.QuadTree(0, 0, context.canvas.width);
+void draw( num delta ) {
+ 
   
-  var rand = new Math.Random( new Date.now().millisecondsSinceEpoch );
-  for( int i = 0; i < 10; i++ ) {
-    var so = new SimpleObject( rand.nextDouble() * context.canvas.width, rand.nextDouble() * context.canvas.height );
-    qt.add( so );
-  }
+  
+//  var rand = new Math.Random( new Date.now().millisecondsSinceEpoch );
+//  for( int i = 0; i < 10; i++ ) {
+//    var so = new SimpleObject( rand.nextDouble() * context.canvas.width, rand.nextDouble() * context.canvas.height );
+//    qt.add( so );
+//  }
   
   context.clearRect(0, 0, context.canvas.width, context.canvas.height );
   context.lineWidth = 0.25;
@@ -64,21 +67,22 @@ void draw( num delta ) {
   context.strokeStyle = "";
   context.lineWidth = 0;
   
+  
 //  print(qt.wrappedDictionary.length);
   context.beginPath();
   qt.wrappedDictionary.forEach(void f( geom.IQuadStorable key, value){
     SimpleObject so = key as SimpleObject;
-    context.moveTo( so.position.x, so.position.y );
+    context.moveTo( so.position.x+5, so.position.y );
     context.arc( so.position.x, so.position.y, 5, 0, 360, false);
   });
   
-  var d = drawQuad( qt.quadTreeRoot, 0 );
+  drawQuad( qt.quadTreeRoot, 0 );
   context.closePath();
   context.stroke();
  }
 
-int drawQuad( geom.QuadTreeNode quad, int depth ) {
-  if( quad == null ) return depth;
+void drawQuad( geom.QuadTreeNode quad, int depth ) {
+  if( quad == null ) return;
   
   context.rect( quad.rect.x, quad.rect.y, quad.rect.width, quad.rect.height );
   
@@ -87,8 +91,6 @@ int drawQuad( geom.QuadTreeNode quad, int depth ) {
   drawQuad( quad.childBR, depth+1 );
   drawQuad( quad.childTL, depth+1 );
   drawQuad( quad.childTR, depth+1 );
-  
-  return depth+1;
 }
 
 

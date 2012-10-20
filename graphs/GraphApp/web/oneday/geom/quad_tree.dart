@@ -11,10 +11,11 @@ class QuadTree {
   /// Maximum number of objects we will contain before splitting
   int maxObjectsPerNode = 2;
   
-  int maxDepth = 4;
+  /// Maximum depth of the tree, this superceedes maxObjectsPerNode
+  int maxDepth = 6;
   
-  QuadTree( int x, int y, int width, int height ) {
-    quadTreeRoot = new QuadTreeNode.fromExtents(null, x,y, width, height );
+  QuadTree( int x, int y, int width, int height, [pMaxObjectsPerNode=3, pMaxDepth=6]) : maxObjectsPerNode=pMaxObjectsPerNode, maxDepth=pMaxDepth {
+    quadTreeRoot = new QuadTreeNode.fromExtents(null, x,y, width, height, maxObjectsPerNode, maxDepth );
   }
   
   /// Adds an item
@@ -54,7 +55,10 @@ class QuadTree {
 class QuadTreeNode {
   
   /// Maximum number of objects we will contain before splitting
-  int maxObjectsPerNode = 2;
+  int maxObjectsPerNode;
+  
+  /// Maximum depth of the tree, this superceedes maxObjectsPerNode
+  int maxDepth;
   
   /// The objects in this [QuadTreeNode]
   List< QuadTreeObject > objects;
@@ -72,11 +76,11 @@ class QuadTreeNode {
   QuadTreeNode childBL;
   
   /// Creates a new [QuadTreeNode] from x,y topleft position that is 'width' in size 
-  factory QuadTreeNode.fromExtents( QuadTreeNode parent, int x, int y, int width, int height ) {
-    return new QuadTreeNode( parent, new Rect(x,y, width, height) );
+  factory QuadTreeNode.fromExtents( QuadTreeNode parent, int x, int y, int width, int height, pMaxObjectsPerNode, pMaxDepth ) {
+    return new QuadTreeNode( parent, new Rect(x,y, width, height), pMaxObjectsPerNode, pMaxDepth );
   }
   
-  QuadTreeNode( this.parent, this.rect );
+  QuadTreeNode( this.parent, this.rect, this.maxObjectsPerNode, this.maxDepth );
 
   
   /// Adds an item to the object list
@@ -123,10 +127,10 @@ class QuadTreeNode {
     Vec2 size = new Vec2( rect.width /2, rect.height / 2 );
     Vec2 mid = new Vec2( rect.x + size.x, rect.y + size.y );
     
-    childTL = new QuadTreeNode( this, new Rect( rect.left(), rect.top(), size.x, size.y ) );
-    childTR = new QuadTreeNode( this, new Rect( mid.x, rect.top(), size.x, size.y ) );
-    childBL = new QuadTreeNode( this, new Rect( rect.left(), mid.y, size.x, size.y ) );
-    childBR = new QuadTreeNode( this, new Rect( mid.x, mid.y, size.x, size.y ) );
+    childTL = new QuadTreeNode( this, new Rect( rect.left(), rect.top(), size.x, size.y ), maxObjectsPerNode, maxDepth );
+    childTR = new QuadTreeNode( this, new Rect( mid.x, rect.top(), size.x, size.y ), maxObjectsPerNode, maxDepth );
+    childBL = new QuadTreeNode( this, new Rect( rect.left(), mid.y, size.x, size.y ), maxObjectsPerNode, maxDepth );
+    childBR = new QuadTreeNode( this, new Rect( mid.x, mid.y, size.x, size.y ), maxObjectsPerNode, maxDepth );
     
     // If they're completely contained by the quad, bump objects down
     for( int i = 0; i < objects.length; i++ ) {

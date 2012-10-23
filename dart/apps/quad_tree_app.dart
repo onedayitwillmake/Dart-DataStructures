@@ -17,6 +17,8 @@ class SimpleObject implements geom.IQuadStorable {
   bool isInRect( geom.Rect r ) => position.isInRect(r);
   bool intersectsRect( geom.Rect r ) => position.intersectsRect(r);
 }
+
+
 void main() {
   CanvasElement canvas = query("#container");
   context = canvas.context2d;
@@ -61,7 +63,8 @@ void draw( num delta ) {
   context.strokeStyle = "";
   context.lineWidth = 0;
 
-
+ 
+  
 //  print(qt.wrappedDictionary.length);
   context.beginPath();
   qt.wrappedDictionary.forEach(void f( geom.IQuadStorable key, value){

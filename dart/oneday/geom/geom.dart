@@ -1,7 +1,7 @@
 library geom;
 
 import "dart:math" as Math;
-import 'dart:html' show CanvasRenderingContext2D;
+//import 'dart:html';// show CanvasRenderingContext2D;
 
 part 'Vec2.dart';
 part 'Circle.dart';

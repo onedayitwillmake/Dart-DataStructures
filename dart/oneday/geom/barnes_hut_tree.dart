@@ -17,6 +17,7 @@ class BarnesHutTree extends QuadTree {
   }
 }
 
+/// Maintains a total mass, and center of gravity for all it's children
 class BarnesHutTreeNode extends QuadTreeNode {
   /// Mass of this tree (cummaltive mass of all it's children)
   num mass = 0;
@@ -46,7 +47,7 @@ class BarnesHutTreeNode extends QuadTreeNode {
 }
 
 
-
+/// To exist an BarnesHutTree we require a position and a mass for this object
 abstract class IBarnesHutStorable extends IQuadStorable{
   Vec2 get position;
   num get mass;

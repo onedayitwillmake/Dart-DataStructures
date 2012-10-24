@@ -27,7 +27,7 @@ void main() {
     var so = new SimpleObject( rand.nextDouble() * context.canvas.width, rand.nextDouble() * context.canvas.height );
     qt.add( so );
   }
-
+  
   start();
 }
 

@@ -26,7 +26,7 @@ class DrawableCircle extends Circle {
   DrawableCircle( num pX, num pY, num pRadius, this.color, [this.label] ) : super(pX, pY, pRadius );
 
   /// Draws [this] circle into the provided [CanvasRenderingContext2D]
-  void draw( CanvasRenderingContext2D context ) {
+  void draw( Dynamic context ) {
     context.save();
     context.fillStyle = color;
     context.strokeStyle = '';

@@ -25,6 +25,7 @@ class QuadTree {
 
   /// Adds a node
   void add(IQuadStorable item) {
+    
     QuadTreeObject wrappedObject = new QuadTreeObject(item);
     wrappedDictionary[item] = wrappedObject;
     quadTreeRoot.insert( wrappedObject );
@@ -32,9 +33,10 @@ class QuadTree {
 
   /// Removes an node
   bool remove(IQuadStorable item) {
+    
     var removedItem = wrappedDictionary.remove( item );
     if( removedItem != null ) { // Map.remove only returns the object if it was removed ( thus existed )
-      quadTreeRoot.delete( wrappedDictionary[item], true );
+      quadTreeRoot.delete( removedItem, true );
       return true;
     }
 
@@ -255,27 +257,6 @@ class QuadTreeNode {
     childBL = null;
     childBR = null;
   }
-
-  /**
-   * Deletes an item from the [QuadTreeNode].
-   * If the object is removed causes this quad to have no objects in it's children, it's children will be removed as well
-   */
-  delete(QuadTreeObject item, bool clean) {
-    if( item.owner != null ) {
-      if( item.owner == this ) {
-        _remove( item );
-
-        if( clean ) {
-          _cleanUpwards();
-        }
-      } else {
-        item.owner.delete( item, clean );
-      }
-    }
-  }
-  
-  /// Assimilate this node into our tree (subclasses should overwrite this)
-  void _assimilateNode( QuadTreeObject aNode ){}
   
   /// Insert an item into the [QuadTreeNode].
   void insert(QuadTreeObject item) {
@@ -309,6 +290,30 @@ class QuadTreeNode {
       }
     }
   }
+  
+
+  /**
+   * Deletes an item from the [QuadTreeNode].
+   * If the object is removed causes this quad to have no objects in it's children, it's children will be removed as well
+   */
+  delete(QuadTreeObject item, bool clean) {
+    
+    
+    if( item.owner != null ) {
+      if( item.owner == this ) {
+        _remove( item );
+
+        if( clean ) {
+          _cleanUpwards();
+        }
+      } else {
+        item.owner.delete( item, clean );
+      }
+    }
+  }
+  
+  /// Assimilate this node into our tree (subclasses should overwrite this)
+  void _assimilateNode( QuadTreeObject aNode ){}
 
   /// Moves the [QuadTreeObject] in the tree
   void _move( QuadTreeObject item ) {

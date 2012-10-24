@@ -13,10 +13,15 @@ void main() {
 
   bt = new geom.BarnesHutTree(0, 0, context.canvas.width, context.canvas.height, 1);
   var rand = new Math.Random( new Date.now().millisecondsSinceEpoch );
-  for( int i = 0; i < 0; i++ ) {
-    var so = new SimpleObject( rand.nextDouble() * context.canvas.width, rand.nextDouble() * context.canvas.height );
+  SimpleObject so = null;
+  for( int i = 0; i < 10; i++ ) {
+    so = new SimpleObject( rand.nextDouble() * context.canvas.width, rand.nextDouble() * context.canvas.height );
     bt.add( so );
   }
+  
+  
+  print(so.hashCode());
+  bt.remove( so );
 
   start();
 }
@@ -53,7 +58,7 @@ void draw( num delta ) {
 //  print(qt.wrappedDictionary.length);
   context.beginPath();
   bt.wrappedDictionary.forEach(void f( geom.IQuadStorable key, value){
-    SimpleObject so = key as SimpleObject;
+    SimpleObject so = key as SimpleObject; 
     context.moveTo( so.position.x+5, so.position.y );
     context.arc( so.position.x, so.position.y, 5, 0, 360, false);
   });

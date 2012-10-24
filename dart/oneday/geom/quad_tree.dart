@@ -42,21 +42,23 @@ class QuadTree {
 
     return false;
   }
-
+  
+  List< IQuadStorable > getObjects( Rect searchRect ) => quadTreeRoot.getObjects( searchRect );
+  
+  /// Determins whether the [QuadTree] contains a specific value
+  bool contains( IQuadStorable item ) => wrappedDictionary.containsKey( item );
+  
   /// Removes all items
   clear() {
     wrappedDictionary.clear();
     quadTreeRoot.clear();
   }
 
-  /// Determins whether the [QuadTree] contains a specific value
-  bool contains( IQuadStorable item ) => wrappedDictionary.containsKey( item );
-
   /// The rectangluar bounds
-  Rect quadRect() => quadTreeRoot.rect;
+  Rect get quadRect => quadTreeRoot.rect;
 
   /// Number of elements contained
-  int count() => wrappedDictionary.length;
+  int get count => wrappedDictionary.length;
 }
 
 /// The actual QuadTree recursive data-structure
@@ -151,9 +153,9 @@ class QuadTreeNode {
     Vec2 size = new Vec2( rect.width /2, rect.height / 2 );
     Vec2 mid = new Vec2( rect.x + size.x, rect.y + size.y );
 
-    childTL = createChildNode( this, new Rect( rect.left(), rect.top(), size.x, size.y ), _maxObjectsPerNode, _maxDepth - 1);
-    childTR = createChildNode( this, new Rect( mid.x, rect.top(), size.x, size.y ), _maxObjectsPerNode, _maxDepth - 1);
-    childBL = createChildNode( this, new Rect( rect.left(), mid.y, size.x, size.y ), _maxObjectsPerNode, _maxDepth - 1);
+    childTL = createChildNode( this, new Rect( rect.left, rect.top, size.x, size.y ), _maxObjectsPerNode, _maxDepth - 1);
+    childTR = createChildNode( this, new Rect( mid.x, rect.top, size.x, size.y ), _maxObjectsPerNode, _maxDepth - 1);
+    childBL = createChildNode( this, new Rect( rect.left, mid.y, size.x, size.y ), _maxObjectsPerNode, _maxDepth - 1);
     childBR = createChildNode( this, new Rect( mid.x, mid.y, size.x, size.y ), _maxObjectsPerNode, _maxDepth - 1);
 
     // If they're completely contained by the quad, bump objects down
@@ -325,7 +327,7 @@ class QuadTreeNode {
   }
 
   /// Returns all the objects in this tree that are contained within the supplied [Rect]
-  List< IQuadStorable > _getObjects( Rect searchRect ) {
+  List< IQuadStorable > getObjects( Rect searchRect ) {
     List< IQuadStorable > results = new List< IQuadStorable >();
     _getObjectsImpl( searchRect, results );
     return results;

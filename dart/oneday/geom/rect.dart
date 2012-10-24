@@ -32,40 +32,40 @@ class Rect implements IQuadStorable {
 
   /// Creates a new [Rect] instance from the center point and extents.
   factory Rect.fromExtents( Vec2 pCenter, Vec2 pHalfSize ) {
-    return new Rect( pCenter.x - pHalfSize.x, pCenter.y - pHalfSize.y, pCenter.x + pHalfSize.x, pCenter.y + pHalfSize.y );
+    return new Rect( pCenter.x - pHalfSize.x, pCenter.y - pHalfSize.y, pHalfSize.x*2, pHalfSize.y*2 );
   }
 
   /// Does this rect contain the given point?
-  bool containsPoint( Vec2 p ) => (p.x >= x && p.x <= x+width) && (p.y > y && p.y <= y+height);
+  bool containsPoint( Vec2 p ) => (p.x >= x && p.x <= x+width) && (p.y >= y && p.y <= y+height);
 
   /// Does this [Rect] fully emcompass 'other'?
   bool containsRect( Rect other ) {
-    return x < other.x && y < other.y && right() > other.right()  && bottom() > other.bottom();
+    return x <= other.x && y <= other.y && right >= other.right  && bottom >= other.bottom;
   }
 
   /// Returns true if this object is inside of the [Rect] r
   bool isInRect( Rect other ) => other.containsRect( this );
 
   /// Returns true if the object intersects the Rect r
-  bool intersectsRect( Rect r ) => (r.x < right() && r.right() > x && r.y < bottom() && r.bottom() > y);
+  bool intersectsRect( Rect r ) => (r.x < right && r.right > x && r.y < bottom && r.bottom > y);
 
   /// X coordinate of the [Rect].
-  left() => x;
+  num get left => x;
 
   /// Right most coordinate of the [Rect].
-  right() => x+width;
+  num get right => x+width;
 
   /// Y coordinate of the top-left corner of the rectangle.
-  top() => y;
+  num get top => y;
 
   /// [Rect]
-  bottom() => y+height;
+  num get bottom => y+height;
 
   /// A [Vec2] of the bottom-right corner of the [Rect].
-  bottomRight() => new Vec2( right(), bottom() );
+  Vec2 bottomRight() => new Vec2( right, bottom );
 
   /// A [Vec2] of the top-left corner of the [Rect].
-  topLeft() => new Vec2( x, y );
+  Vec2 topLeft() => new Vec2( x, y );
 
   /// Area of the Rect
   area() => width*height;

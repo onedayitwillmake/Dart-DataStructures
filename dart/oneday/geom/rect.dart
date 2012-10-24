@@ -47,7 +47,7 @@ class Rect implements IQuadStorable {
   bool isInRect( Rect other ) => other.containsRect( this );
 
   /// Returns true if the object intersects the Rect r
-  bool intersectsRect( Rect r ) => (r.x < right && r.right > x && r.y < bottom && r.bottom > y);
+  bool intersectsRect( Rect r ) => (r.x <= right && r.right >= x && r.y <= bottom && r.bottom >= y);
 
   /// X coordinate of the [Rect].
   num get left => x;

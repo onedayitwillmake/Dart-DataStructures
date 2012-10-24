@@ -4,7 +4,7 @@ import '../oneday/geom/geom.dart';
 const num EPSILON = 0.0001;
 
 void main() {
-  // Create a vector with arguments and without
+
   UnitTest.test('Creation', function(){
     Rect r1 = new Rect(1, 2, 10, 20);
     
@@ -35,7 +35,7 @@ void main() {
     UnitTest.expect( r1.bottomRight().y, UnitTest.equals(22) );
   });
   
-  UnitTest.test('Contains Point', function(){
+  UnitTest.test('containsPoint', function(){
     Rect r1 = new Rect(5, 5, 10, 10);
     
     UnitTest.expect( r1.containsPoint( new Vec2(5, 5) ), UnitTest.isTrue );
@@ -52,7 +52,7 @@ void main() {
     UnitTest.expect( r1.containsPoint( new Vec2(-5, 0) ), UnitTest.isFalse );
   });
   
-  UnitTest.test('Contains Rect', function(){
+  UnitTest.test('containsRect', function(){
     Rect r1 = new Rect(0,0, 10, 10);
     
     UnitTest.expect( r1.containsRect( new Rect(1,1,5,5) ), UnitTest.isTrue );
@@ -62,5 +62,27 @@ void main() {
     UnitTest.expect( r1.containsRect( new Rect(0,0,10,11) ), UnitTest.isFalse );
     UnitTest.expect( r1.containsRect( new Rect(1,0,10,10) ), UnitTest.isFalse );
     UnitTest.expect( r1.containsRect( new Rect(9,0,2,10) ), UnitTest.isFalse );
+  });
+  
+  UnitTest.test('intersectsRect', function(){
+    Rect r1 = new Rect(0,0, 10, 10);
+    
+    UnitTest.expect( r1.intersectsRect( new Rect(1,1,5,5) ), UnitTest.isTrue );
+    UnitTest.expect( r1.intersectsRect( new Rect(1,1,1,1) ), UnitTest.isTrue );
+    UnitTest.expect( r1.intersectsRect( new Rect(0,0,10,10) ), UnitTest.isTrue );
+    UnitTest.expect( r1.intersectsRect( new Rect(9,0,1,10) ), UnitTest.isTrue );
+    UnitTest.expect( r1.intersectsRect( new Rect(0,0,10,11) ), UnitTest.isTrue );
+    UnitTest.expect( r1.intersectsRect( new Rect(1,0,10,10) ), UnitTest.isTrue );
+    UnitTest.expect( r1.intersectsRect( new Rect(9,0,2,10) ), UnitTest.isTrue );
+    UnitTest.expect( r1.intersectsRect( new Rect.fromExtents(new Vec2(9,9),new Vec2(1,1) ) ), UnitTest.isTrue );
+    UnitTest.expect( r1.intersectsRect( new Rect(10,10,1,1) ), UnitTest.isTrue );
+    
+    UnitTest.expect( r1.intersectsRect( new Rect(11,10,1,1) ), UnitTest.isFalse );    // [X] other.starts after r1.ends, fail
+    UnitTest.expect( r1.intersectsRect( new Rect(-10,0,5,10) ), UnitTest.isFalse );   // [X] other.ends before r1.starts, fail
+    UnitTest.expect( r1.intersectsRect( new Rect(0,11,1,1) ), UnitTest.isFalse );     // [Y] other.starts after r1.ends, fail
+    UnitTest.expect( r1.intersectsRect( new Rect(0,-5,1,1) ), UnitTest.isFalse );     // [Y] other.ends before r1.starts, fail
+    
+    UnitTest.expect( r1.intersectsRect( new Rect(0,0,1,1) ), UnitTest.isTrue );
+    UnitTest.expect( r1.intersectsRect( new Rect(10,10,1,1) ), UnitTest.isTrue );
   });
 }

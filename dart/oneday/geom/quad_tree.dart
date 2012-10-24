@@ -14,7 +14,12 @@ class QuadTree {
   /// Maximum depth of the tree, this superceedes maxObjectsPerNode
   int maxDepth = 6;
 
-  QuadTree( int x, int y, int width, int height, [pMaxObjectsPerNode=3, pMaxDepth=6]) : maxObjectsPerNode=pMaxObjectsPerNode, maxDepth=pMaxDepth {
+  QuadTree( int x, int y, int width, int height, [int pMaxObjectsPerNode=3, int pMaxDepth=6]) : maxObjectsPerNode=pMaxObjectsPerNode, maxDepth=pMaxDepth {
+    _createRootNode(x,y,width,height);
+  }
+
+  /// Creates the [QuadTreeNode] which is the root of this tree
+  void _createRootNode( int x, int y, int width, int height ) {
     quadTreeRoot = new QuadTreeNode.fromExtents(null, x,y, width, height, maxObjectsPerNode, maxDepth );
   }
 
@@ -78,18 +83,29 @@ class QuadTreeNode {
   QuadTreeNode childBR;
   /// BottomLeft [QuadTreeNode]
   QuadTreeNode childBL;
-
+  
+  static int NEXT_UUID = 0;
+  int UUID;
+  
+  
   /// Creates a new [QuadTreeNode] from x,y topleft position that is 'width' in size
-  factory QuadTreeNode.fromExtents( QuadTreeNode parent, int x, int y, int width, int height, pMaxObjectsPerNode, pMaxDepth ) {
+  factory QuadTreeNode.fromExtents( QuadTreeNode parent, int x, int y, int width, int height, int pMaxObjectsPerNode, int pMaxDepth ) {
     return new QuadTreeNode( parent, new Rect(x,y, width, height), pMaxObjectsPerNode, pMaxDepth );
   }
   
   /// Constructor
-  QuadTreeNode( this._parent, this.rect, this._maxObjectsPerNode, this._maxDepth );
-
+  QuadTreeNode( this._parent, this.rect, this._maxObjectsPerNode, this._maxDepth ) {
+    UUID = QuadTreeNode.NEXT_UUID++;
+  }
+  
+  /// Creates a regular [QuadTree] node 
+  QuadTreeNode createChildNode( QuadTreeNode parent, Rect aRect, int pMaxObjectsPerNode, int pMaxDepth ) {
+    return new QuadTreeNode( parent, aRect, pMaxObjectsPerNode, pMaxDepth );
+  }
 
   /// Adds an item to the object list, this should only be called by 'insert'
   void _add( QuadTreeObject item ) {
+//    print("Added by: ${this.UUID}");
     if( _objects == null ) {
       _objects = new List< QuadTreeObject >();
     }
@@ -133,10 +149,10 @@ class QuadTreeNode {
     Vec2 size = new Vec2( rect.width /2, rect.height / 2 );
     Vec2 mid = new Vec2( rect.x + size.x, rect.y + size.y );
 
-    childTL = new QuadTreeNode( this, new Rect( rect.left(), rect.top(), size.x, size.y ), _maxObjectsPerNode, _maxDepth );
-    childTR = new QuadTreeNode( this, new Rect( mid.x, rect.top(), size.x, size.y ), _maxObjectsPerNode, _maxDepth );
-    childBL = new QuadTreeNode( this, new Rect( rect.left(), mid.y, size.x, size.y ), _maxObjectsPerNode, _maxDepth );
-    childBR = new QuadTreeNode( this, new Rect( mid.x, mid.y, size.x, size.y ), _maxObjectsPerNode, _maxDepth );
+    childTL = createChildNode( this, new Rect( rect.left(), rect.top(), size.x, size.y ), _maxObjectsPerNode, _maxDepth - 1);
+    childTR = createChildNode( this, new Rect( mid.x, rect.top(), size.x, size.y ), _maxObjectsPerNode, _maxDepth - 1);
+    childBL = createChildNode( this, new Rect( rect.left(), mid.y, size.x, size.y ), _maxObjectsPerNode, _maxDepth - 1);
+    childBR = createChildNode( this, new Rect( mid.x, mid.y, size.x, size.y ), _maxObjectsPerNode, _maxDepth - 1);
 
     // If they're completely contained by the quad, bump objects down
     for( int i = 0; i < _objects.length; i++ ) {
@@ -257,17 +273,22 @@ class QuadTreeNode {
       }
     }
   }
-
+  
+  /// Assimilate this node into our tree (subclasses should overwrite this)
+  void _assimilateNode( QuadTreeObject aNode ){}
+  
   /// Insert an item into the [QuadTreeNode].
   void insert(QuadTreeObject item) {
      // If this quad doesn't contain the items rect don't do anything unless we're the rootquad
     if( ! item.data.isInRect( rect ) ) {
       assert( _parent == null );
-      if( _parent == null ) {
+      if( _parent == null ) { 
         _add( item );
       } else {
         return;
       }
+    } else {
+      _assimilateNode( item );
     }
 
     // There is room to add this object
@@ -278,7 +299,8 @@ class QuadTreeNode {
       if( childTL == null ){
         _subdivide();
       }
-
+  
+      /// Try adding it to one of our children
       QuadTreeNode destTree = _getDestinationTree( item );
       if( destTree == this ) {
        _add( item );

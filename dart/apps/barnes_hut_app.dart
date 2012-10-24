@@ -2,30 +2,20 @@ import 'dart:html';
 import 'dart:math' as Math;
 import '../oneday/geom/geom.dart' as geom;
 
-geom.QuadTree qt;
+geom.BarnesHutTree bt;
 CanvasRenderingContext2D context;
 int lastTime = null;
-
-class SimpleObject implements geom.IQuadStorable {
-  geom.Vec2 position;
-  geom.Vec2 velocity;
-  SimpleObject( num x, num y ) : position = new geom.Vec2(x,y), velocity = new geom.Vec2(0,0);
-
-  bool isInRect( geom.Rect r ) => position.isInRect(r);
-  bool intersectsRect( geom.Rect r ) => position.intersectsRect(r);
-}
-
 
 void main() {
   CanvasElement canvas = query("#container");
   context = canvas.context2d;
   document.on.click.add(onMouseClick);
 
-  qt = new geom.QuadTree(0, 0, context.canvas.width, context.canvas.height, 1);
+  bt = new geom.BarnesHutTree(0, 0, context.canvas.width, context.canvas.height, 1);
   var rand = new Math.Random( new Date.now().millisecondsSinceEpoch );
-  for( int i = 0; i < 100; i++ ) {
+  for( int i = 0; i < 0; i++ ) {
     var so = new SimpleObject( rand.nextDouble() * context.canvas.width, rand.nextDouble() * context.canvas.height );
-    qt.add( so );
+    bt.add( so );
   }
 
   start();
@@ -50,7 +40,7 @@ void update( int time ) {
 }
 
 void onMouseClick( MouseEvent e) {
-  qt.add(new SimpleObject( e.clientX, e.clientY-100) );
+  bt.add(new SimpleObject( e.clientX, e.clientY-100) );
 }
 
 void draw( num delta ) {
@@ -62,28 +52,43 @@ void draw( num delta ) {
 
 //  print(qt.wrappedDictionary.length);
   context.beginPath();
-  qt.wrappedDictionary.forEach(void f( geom.IQuadStorable key, value){
+  bt.wrappedDictionary.forEach(void f( geom.IQuadStorable key, value){
     SimpleObject so = key as SimpleObject;
     context.moveTo( so.position.x+5, so.position.y );
     context.arc( so.position.x, so.position.y, 5, 0, 360, false);
   });
 
-  drawQuad( qt.quadTreeRoot, 0 );
+  drawQuad( bt.quadTreeRoot, 0 );
   context.closePath();
   context.stroke();
  }
 
-void drawQuad( geom.QuadTreeNode quad, int depth ) {
+void drawQuad( geom.BarnesHutTreeNode quad, int depth ) {
   if( quad == null ) return;
 
   context.rect( quad.rect.x, quad.rect.y, quad.rect.width, quad.rect.height );
-
-
+  
+  if( quad.centerMass != null ) {
+    context.moveTo( quad.centerMass.x+3, quad.centerMass.y);
+    context.arc( quad.centerMass.x, quad.centerMass.y, 3, 0, 360, false);
+  }
+ 
   drawQuad( quad.childBL, depth+1 );
   drawQuad( quad.childBR, depth+1 );
   drawQuad( quad.childTL, depth+1 );
   drawQuad( quad.childTR, depth+1 );
 }
 
+
+class SimpleObject extends geom.IBarnesHutStorable {
+  geom.Vec2 position;
+  geom.Vec2 velocity;
+  num mass = 1;
+  
+  SimpleObject( num x, num y ) : position = new geom.Vec2(x,y), velocity = new geom.Vec2(0,0);
+
+  bool isInRect( geom.Rect r ) => position.isInRect(r);
+  bool intersectsRect( geom.Rect r ) => position.intersectsRect(r);
+}
 
 

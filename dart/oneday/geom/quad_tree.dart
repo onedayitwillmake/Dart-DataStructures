@@ -25,7 +25,6 @@ class QuadTree {
 
   /// Adds a node
   void add(IQuadStorable item) {
-    
     QuadTreeObject wrappedObject = new QuadTreeObject(item);
     wrappedDictionary[item] = wrappedObject;
     quadTreeRoot.insert( wrappedObject );
@@ -43,7 +42,7 @@ class QuadTree {
     return false;
   }
   
-  List< IQuadStorable > getObjects( Rect searchRect ) => quadTreeRoot.getObjects( searchRect );
+  void getObjects( Rect searchRect, List< IQuadStorable > results ) => quadTreeRoot.getObjects( searchRect, results );
   
   /// Determins whether the [QuadTree] contains a specific value
   bool contains( IQuadStorable item ) => wrappedDictionary.containsKey( item );
@@ -184,7 +183,6 @@ class QuadTreeNode {
     } else if( item.data.isInRect( childBL.rect ) ) {
       destTree = childBL;
     }
-
     return destTree;
   }
 
@@ -279,7 +277,7 @@ class QuadTreeNode {
       _add( item );
     } else {
       /// Create quads and bump existing objects down
-      if( childTL == null ){
+      if( childTL == null ) {
         _subdivide();
       }
   
@@ -327,10 +325,8 @@ class QuadTreeNode {
   }
 
   /// Returns all the objects in this tree that are contained within the supplied [Rect]
-  List< IQuadStorable > getObjects( Rect searchRect ) {
-    List< IQuadStorable > results = new List< IQuadStorable >();
+  void getObjects( Rect searchRect,  List< IQuadStorable > results ) {
     _getObjectsImpl( searchRect, results );
-    return results;
   }
 
   /// Implementation which recursively retrieves all objects in it's children, if searchRect is either contained or intersects our [Rect]

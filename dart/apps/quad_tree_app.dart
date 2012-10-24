@@ -25,16 +25,22 @@ void main() {
   
   geom.QuadTree qt =  new geom.QuadTree(0,0,1000,1000, 1);
   Math.Random rand = new Math.Random(1);
-  int objectSize = 100;
+  int objectSize = 1;
   
+  var s = new Date.now().millisecondsSinceEpoch;
+  var e;
+  print("S:${s}");
   List< SimpleObject > objs = new List< SimpleObject >();
   objs.add( new SimpleObject(50, 50, objectSize, objectSize) );
-//    objs.add( new SimpleObject(450, 450, objectSize, objectSize) );
-//    objs.add( new SimpleObject(501, 100, objectSize, objectSize) );
+  objs.add( new SimpleObject(450, 450, objectSize, objectSize) );
+  objs.add( new SimpleObject(501, 100, objectSize, objectSize) );
   
   objs.forEach( (e)=> qt.add(e) );
   
-  List< SimpleObject > results = qt.getObjects( new geom.Rect(0,0, 51, 51) );
+  
+  List< SimpleObject > results = new List< SimpleObject>();
+  qt.getObjects( new geom.Rect(0,0, 51, 51), results );
+  print( results );
   
 //
 //  qt = new geom.QuadTree(0, 0, context.canvas.width, context.canvas.height, 1);
@@ -82,9 +88,9 @@ void draw( num delta ) {
 //    SimpleObject so = key as SimpleObject;
 //    context.moveTo( so.r.position.x+5, so.position.y );
 //    context.arc( so.position.x, so.position.y, 5, 0, 360, false);
-//  });
-
-  drawQuad( qt.quadTreeRoot, 0 );
+////  });
+//
+//  drawQuad( qt.quadTreeRoot, 0 );
   context.closePath();
   context.stroke();
  }

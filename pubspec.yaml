@@ -1,5 +1,5 @@
-name:  GraphApp
-description:  A sample application
+name:  Dart Datastructures
+description:  A bunch of data structures focused on algorithms
 dependencies: 
   unittest: { sdk: unittest }
 

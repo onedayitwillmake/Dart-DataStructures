@@ -260,8 +260,9 @@ class QuadTreeNode {
   
   /// Insert an item into the [QuadTreeNode].
   void insert(QuadTreeObject item) {
+    print("${UUID}");
      // If this quad doesn't contain the items rect don't do anything unless we're the rootquad
-    if( ! item.data.isInRect( rect ) ) {
+    if( !item.data.isInRect( rect ) ) {
       assert( _parent == null );
       if( _parent == null ) { 
         _add( item );
@@ -276,6 +277,8 @@ class QuadTreeNode {
     if( _objects == null || ( childTL == null && _objects.length + 1 <= _maxObjectsPerNode) ) {
       _add( item );
     } else {
+//      print("${UUID} | ${_objects.length}");
+      
       /// Create quads and bump existing objects down
       if( childTL == null ) {
         _subdivide();

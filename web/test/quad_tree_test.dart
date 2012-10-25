@@ -18,6 +18,7 @@ void main() {
 //      print("${so.r.x}, ${so.r.y}");
       qt.add( so );
     }
+    print("Done");
     e = new Date.now().millisecondsSinceEpoch;
     print("Duration:${e-s}");
     UnitTest.expect(qt.count, UnitTest.equals(2) );
@@ -75,6 +76,6 @@ class SimpleObject implements IQuadStorable {
   Vec2 velocity;
   SimpleObject(num x, num y, {num width: 1, num height: 1}) : r = new Rect(x,y,width,height), velocity = new Vec2(0,0);
 
-  bool isInRect( Rect r ) => r.isInRect(r);
+  bool isInRect( Rect r ) => new Vec2(r.x, r.y).isInRect(r);
   bool intersectsRect( Rect r ) => r.intersectsRect(r);
 }

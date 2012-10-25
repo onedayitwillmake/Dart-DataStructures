@@ -25,6 +25,7 @@ class Rect implements IQuadStorable {
 
   /// Creates a new [Rect] instance.
   Rect( this.x, this.y, this.width, this.height ) {
+//    print(toString());
 //    center = new Vec2( (left() + right() ) /2, (top() + bottom() ) / 2 );
 //    size = new Vec2( width, height );
 //    halfSize = size/2;
@@ -44,7 +45,11 @@ class Rect implements IQuadStorable {
   }
 
   /// Returns true if this object is inside of the [Rect] r
-  bool isInRect( Rect other ) => other.containsRect( this );
+  bool isInRect( Rect other ) {
+    bool result = other.containsRect( this );
+//    print("Testing ${other} against ${this.toString()} reuslt=${result}");
+    return result;
+  }
 
   /// Returns true if the object intersects the Rect r
   bool intersectsRect( Rect r ) => (r.x <= right && r.right >= x && r.y <= bottom && r.bottom >= y);
@@ -73,4 +78,5 @@ class Rect implements IQuadStorable {
   /// Aspect ratio of the Rect
   aspect() => width / height;
 
+  toString() => "Rect: ${x.toStringAsFixed(2)},${y.toStringAsFixed(2)}, ${width.toStringAsFixed(1)}, ${height.toStringAsFixed(1)};";
 }

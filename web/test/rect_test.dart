@@ -5,6 +5,31 @@ const num EPSILON = 0.0001;
 
 void main() {
 
+  UnitTest.test("QuadTree bug", function(){
+/**
+Rect: 0.00,0.00, 1000.0, 1000.0; 
+Rect: 690.01,607.72, 100.0, 100.0;
+Rect: 487.64,285.51, 100.0, 100.0;
+
+Rect: 0.00,0.00, 500.0, 500.0;
+Rect: 500.00,0.00, 500.0, 500.0;
+Rect: 0.00,500.00, 500.0, 500.0;
+Rect: 500.00,500.00, 500.0, 500.0;
+*/
+    Rect r1 = new Rect( 690.01, 607.72, 100, 100);
+    Rect r2 = new Rect( 487.64, 285.51, 100, 100);
+    
+    Rect TL = new Rect(0,0,500,500);
+    Rect TR = new Rect(500, 0, 500, 500);
+    Rect BL = new Rect(0, 500, 500, 500);
+    Rect BR = new Rect(500, 500, 500, 500);
+    
+    //item.data.isInRect( childTL.rect )
+    print( r1.isInRect(TL) );
+    print( r1.isInRect(TR) );
+    print( r1.isInRect(BL) );
+    print( r1.isInRect(BR) );
+  });
   UnitTest.test('Creation', function(){
     Rect r1 = new Rect(1, 2, 10, 20);
 

@@ -12,9 +12,9 @@ class QuadTree {
   int maxObjectsPerNode = 2;
 
   /// Maximum depth of the tree, this superceedes maxObjectsPerNode
-  int maxDepth = 6;
+  int maxDepth = 4;
 
-  QuadTree( int x, int y, int width, int height, [int pMaxObjectsPerNode=3, int pMaxDepth=6]) : maxObjectsPerNode=pMaxObjectsPerNode, maxDepth=pMaxDepth {
+  QuadTree( int x, int y, int width, int height, [int pMaxObjectsPerNode=1, int pMaxDepth=10]) : maxObjectsPerNode=pMaxObjectsPerNode, maxDepth=pMaxDepth {
     _createRootNode(x,y,width,height);
   }
 
@@ -26,6 +26,8 @@ class QuadTree {
   /// Adds a node
   void add(IQuadStorable item) {
     QuadTreeObject wrappedObject = new QuadTreeObject(item);
+//    print("QuadTree::add\n\titem_id=${wrappedObject.UUID}");
+      
     wrappedDictionary[item] = wrappedObject;
     quadTreeRoot.insert( wrappedObject );
   }
@@ -108,7 +110,8 @@ class QuadTreeNode {
 
   /// Adds an item to the object list, this should only be called by 'insert'
   void _add( QuadTreeObject item ) {
-//    print("Added by: ${this.UUID}");
+//    print("QuadTreeNode::_add\n\tid= ${UUID} item_id=${item.UUID}");
+    
     if( _objects == null ) {
       _objects = new List< QuadTreeObject >();
     }
@@ -149,6 +152,8 @@ class QuadTreeNode {
 
   /// Subdivide this [QuadTreeNode] and move it's children in to the appropriate quads
   void _subdivide() {
+//    print("QuadTreeNode::_subdivide\n\tid= ${UUID}");
+    
     Vec2 size = new Vec2( rect.width /2, rect.height / 2 );
     Vec2 mid = new Vec2( rect.x + size.x, rect.y + size.y );
 
@@ -159,13 +164,16 @@ class QuadTreeNode {
 
     // If they're completely contained by the quad, bump objects down
     for( int i = 0; i < _objects.length; i++ ) {
+      
       QuadTreeObject item = _objects[i];
-
+//      print("QuadTreeNode::PlaceChildren\n\ti ${i}, item_id:${item.UUID}, node_id: ${UUID}");
+      
       QuadTreeNode destTree = _getDestinationTree( item );
       if( destTree != this ) {
         destTree.insert(item );
         _remove( item );
         i--;
+//        print("Removed: i=${i}");
       }
     }
   }
@@ -175,12 +183,16 @@ class QuadTreeNode {
     QuadTreeNode destTree = this;
 
     if( item.data.isInRect( childTL.rect ) ) {
+//      print("\t TL");
       destTree = childTL;
     } else if( item.data.isInRect( childTR.rect ) ) {
+//      print("\t ");
       destTree = childTR;
     } else if( item.data.isInRect( childBR.rect ) ) {
+//      print("\t BR");
       destTree = childBR;
     } else if( item.data.isInRect( childBL.rect ) ) {
+//      print("\t BL");
       destTree = childBL;
     }
     return destTree;
@@ -260,7 +272,9 @@ class QuadTreeNode {
   
   /// Insert an item into the [QuadTreeNode].
   void insert(QuadTreeObject item) {
-    print("${UUID}");
+//    print("QuadTreeNode::insert\n\tid= ${UUID} item_id=${item.UUID}");
+    
+//    print("${UUID}");
      // If this quad doesn't contain the items rect don't do anything unless we're the rootquad
     if( !item.data.isInRect( rect ) ) {
       assert( _parent == null );
@@ -274,7 +288,7 @@ class QuadTreeNode {
     }
 
     // There is room to add this object
-    if( _objects == null || ( childTL == null && _objects.length + 1 <= _maxObjectsPerNode) ) {
+    if( _objects == null || ( childTL == null && _objects.length + 1 <= _maxObjectsPerNode) || _maxDepth == 0 ) {
       _add( item );
     } else {
 //      print("${UUID} | ${_objects.length}");
@@ -384,7 +398,10 @@ class QuadTreeObject {
   QuadTreeNode  owner;
   IQuadStorable data;
   
-  QuadTreeObject( this.data );
+  int UUID;
+  static int NEXT_UUID = 0;
+  
+  QuadTreeObject( this.data ) : UUID=NEXT_UUID++;
 
   /// Clear memory for GC
   void dispose() {

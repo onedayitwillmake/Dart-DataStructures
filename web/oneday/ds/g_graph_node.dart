@@ -14,6 +14,10 @@ class GGraphNode<T> {
 
   /// UUID if this [GGGraphNode]
   int id;
+  
+  /// How many connects does this [GGraphNode] have
+  int degree =0;
+  
 
   /// Creates a new [GGraphNode]
   GGraphNode( this.id, T this.value );

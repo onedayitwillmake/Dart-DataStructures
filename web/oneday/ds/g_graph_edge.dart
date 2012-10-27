@@ -28,6 +28,7 @@ class GGraphEdge {
   /// edge weight
   int weight;
 
+
   /// Creates an [GGraphEdge] with [GGraphNode] a, and [GGraphNode] b
   GGraphEdge( this.a, this.b );
 

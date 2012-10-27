@@ -80,7 +80,7 @@ interface GGraphSearchDelegate {
   processVertexEarly( GGraphEdge v );
 
   /// Called when a new Edge connection is found
-  processEdge( GGraphEdge a, GGraphEdge b);
+  processEdge( GGraphNode a, GGraphNode b);
 
   /// Called when the vertex has been fully processed ( All recursively connected nodes discovered )
   processVertexLate( GGraphEdge v );

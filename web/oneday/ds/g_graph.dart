@@ -1,8 +1,7 @@
 part of ds;
 
- /**
- * A [GGraph] is an abstract data-structure which consist of a set of Vertices V together with a set E of edges (vertex pairs)
- */
+
+/// A [GGraph] is an abstract data-structure which consist of a set of Vertices V together with a set E of edges (vertex pairs)
 class GGraph {
 
   /// Is the [GGGraph] directed?
@@ -28,21 +27,26 @@ class GGraph {
     bool hasFoundFirstLine = false;
 
     for( String pair in edgeInfo ) {
-      if( pair.startsWith("#") ) continue; // Comment
-
-      // Found the first real line, it contains only one value which is the number of vertices in the graph
+      if( pair.startsWith("#") ) continue; // Comment - ignore
+      
+      /**
+       * Found the first real line.
+       * It contains only one value which is the number of vertices in the graph
+       * 
+       * Create N nodes
+       */
       if( !hasFoundFirstLine ) {
-
-        // Create N nodes
         int n = int.parse(pair);
         for(int i = 1; i <= n; i++ ) {
            g.createNode(i);
         }
-
+        
+        
         hasFoundFirstLine = true;
         continue;
       }
-
+      
+      // For every pair - create an edge
       List<String> nodeInfo = pair.split(",");
       if( nodeInfo.length != 2 ) break; // Bad line, abort!
 
@@ -55,18 +59,21 @@ class GGraph {
 
   /// Inserts an [EdgeNode] into the [Graph]
   void insertEdge( int a, int b, bool isDirected ) {
+    
     GGraphNode x = getNode(a);
     GGraphNode y = getNode(b);
 
     GGraphEdge p = new GGraphEdge(x,y);
+    
 
-    // Linked list behavior
+    // Linked list behavior for each adjacency list
     if( edges.containsKey( a ) ) {
       p.next = edges[a];
     }
+    
     edges[a] = p;
+    x.degree ++;
 
-    print(p.a.id);
     // Call in reverse if isDirected
     if( !isDirected ) {
       insertEdge( b, a, true );

@@ -46,7 +46,7 @@ class GBreadthFirstSearch extends GGraphSearch implements GGraphSearchDelegate {
         if( b == null ) { p = p.next; continue; }
 
         if( edgeNodeIsNotProccessed( b ) || graph.isDirected ) {
-          processEdge( a, b );
+          processEdge( a.a, b.a );
         }
 
         if( edgeNodeIsNotDiscovered( b ) ) {
@@ -69,12 +69,44 @@ class GBreadthFirstSearch extends GGraphSearch implements GGraphSearchDelegate {
     if( _delegate != null ) _delegate.processVertexEarly(v);
   }
 
-  processEdge( GGraphEdge u, GGraphEdge v) {
-    print("\tFound edge [${u.a}, ${v.a}]");
+  processEdge( GGraphNode u, GGraphNode v) {
+    print("\tFound edge [${u}, ${v}]");
     if( _delegate != null ) _delegate.processEdge(u, v);
   }
 
   processVertexLate( GGraphEdge v ) {
     if( _delegate != null ) _delegate.processVertexLate(v);
   }
+}
+
+/// A simple GraphSearchDelegate whichi is used by the twocolor function to create a bi-partite graph
+class GBiPartiteGraphImpl implements GGraphSearchDelegate {
+  /// Whether this graph is bi-partite or not
+  bool isBipartite = true;
+  
+  /// Stores the current color information for each [GGraphEdge]
+  Map< GGraphNode, int > colorMapping = new Map< GGraphNode, int >();
+  
+  void processEdge( GGraphNode a, GGraphNode b ) {
+    if( colorMapping[a] == colorMapping[b] ) {
+      isBipartite = false;
+      print("Warning: not bi-partite due to (${a}, ${b})");
+    }
+    
+    colorMapping[b] = complement( colorMapping[a] );
+  }
+  
+  /**
+   *  Returns the complementory color for the type passed in.
+   *  That is [GGraphSearch.COLOR_RED] if black is passed in, and [GGraphSearch.COLOR_BLACK] if red is passed in. If neither is passed in BreadthFirstSearch.COLOR_NONE is returned.
+   */
+  int complement( int color ) {
+    if( color == BreadthFirstSearch.COLOR_RED ) return BreadthFirstSearch.COLORbLACK;
+    if( color == BreadthFirstSearch.COLORbLACK ) return BreadthFirstSearch.COLOR_RED;
+    return BreadthFirstSearch.COLOR_UNCOLORED;
+  }
+  
+  // The following two callbacks are unused
+  void processVertexEarly( GGraphEdge v ) {}
+  void processVertexLate( GGraphEdge v ) {}
 }

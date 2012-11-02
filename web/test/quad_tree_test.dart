@@ -68,11 +68,27 @@ void main() {
     List< SimpleObject > results = new List< SimpleObject>();
     qt.getObjects( new Rect(0,0, 51, 51), results );
     UnitTest.expect( results.length, UnitTest.equals(1) );
-    
-    
+    print( results[0] );
+    UnitTest.expect( results[0], UnitTest.same( objs[0] ) );
+
     results = new List< SimpleObject>();
     qt.getObjects( new Rect(0,0, 49, 49), results );
     UnitTest.expect( results.length, UnitTest.equals(0) );
+
+    results = new List< SimpleObject>();
+    qt.getObjects( new Rect(0,0, 50, 49), results );
+    UnitTest.expect( results.length, UnitTest.equals(0) );
+
+    // Make sure passing a rect outside the bounds does not cause an error
+    results = new List< SimpleObject>();
+    qt.getObjects( new Rect(-1, -1, 2, 2), results );
+    UnitTest.expect( results.length, UnitTest.equals(0) );
+
+    // Make sure we can detect an object that is contained by the child
+    results = new List< SimpleObject>();
+    qt.getObjects( new Rect(55, 55, 1, 1), results );
+    UnitTest.expect( results.length, UnitTest.equals(1) );
+    UnitTest.expect( results[0], UnitTest.same( objs[0] ) );
   });
 }
 
@@ -86,5 +102,7 @@ class SimpleObject implements IQuadStorable {
 
   bool isInRect( Rect r ) => _rect.isInRect(r);
   bool intersectsRect( Rect r ) => _rect.intersectsRect(r);
+  Vec2 getPosition() => _rect.getPosition();
+  
   String toString() => _rect.toString();
 }

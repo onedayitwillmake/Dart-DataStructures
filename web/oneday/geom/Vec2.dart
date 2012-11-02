@@ -55,6 +55,18 @@ class Vec2 implements IQuadStorable {
 
   /// Returns a new [Vector] which is a negation of this one
   Vec2 negate() => new Vec2(-x, -y);
+  
+  Vec2 multiply( num inScale ) {
+    x *= inScale;
+    y *= inScale;
+    return this;
+  }
+  
+  Vec2 add( Vec2 other ) {
+    this.x += other.x;
+    this.y += other.y;
+    return this;
+  }
 
   /// Returns a new [Vector] by adding [v]
   Vec2 operator+(v) => new Vec2(x + v.x, y + v.y);
@@ -65,5 +77,7 @@ class Vec2 implements IQuadStorable {
 
   Vec2 operator/(v) => (v is num) ? new Vec2(x / v, y / v) : new Vec2(x / v.x, y / v.y);
 
+  Vec2 getPosition() => this;
+  
   String toString() => '(${x.toStringAsFixed(3)}, ${y.toStringAsFixed(3)})';
 }

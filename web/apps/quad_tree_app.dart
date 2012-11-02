@@ -13,11 +13,10 @@ class SimpleObject implements geom.IQuadStorable {
   geom.Vec2 velocity;
   SimpleObject(num x, num y, num width, num height ) : _rect = new geom.Rect(x,y,width,height), velocity = new geom.Vec2(0,0);
 
-  bool isInRect( geom.Rect r ){
-    print("${_rect.x}, ${_rect.y}");
-    return new geom.Vec2(_rect.x, _rect.y).isInRect(r);
-  }
-  bool intersectsRect( geom.Rect r ) => r.intersectsRect(r);
+  bool isInRect( geom.Rect other) => _rect.isInRect( other ); 
+  bool intersectsRect( geom.Rect other ) => _rect.intersectsRect( other );
+  geom.Vec2 getPosition() => _rect.getPosition();
+  
   String toString() => _rect.toString();
 }
 

@@ -11,7 +11,7 @@ class QuadTree {
   /// Maximum number of objects we will contain before splitting
   int maxObjectsPerNode = 2;
 
-  /// Maximum depth of the tree, this superceedes maxObjectsPerNode
+  /// Maximum depth of the tree, this supersedes maxObjectsPerNode
   int maxDepth = 4;
 
   QuadTree( int x, int y, int width, int height, [int pMaxObjectsPerNode=1, int pMaxDepth=10]) : maxObjectsPerNode=pMaxObjectsPerNode, maxDepth=pMaxDepth {
@@ -26,8 +26,7 @@ class QuadTree {
   /// Adds a node
   void add(IQuadStorable item) {
     QuadTreeObject wrappedObject = new QuadTreeObject(item);
-//    print("QuadTree::add\n\titem_id=${wrappedObject.UUID}");
-      
+
     wrappedDictionary[item] = wrappedObject;
     quadTreeRoot.insert( wrappedObject );
   }
@@ -272,9 +271,6 @@ class QuadTreeNode {
   
   /// Insert an item into the [QuadTreeNode].
   void insert(QuadTreeObject item) {
-//    print("QuadTreeNode::insert\n\tid= ${UUID} item_id=${item.UUID}");
-    
-//    print("${UUID}");
      // If this quad doesn't contain the items rect don't do anything unless we're the rootquad
     if( !item.data.isInRect( rect ) ) {
       assert( _parent == null );
@@ -314,8 +310,6 @@ class QuadTreeNode {
    * If the object is removed causes this quad to have no objects in it's children, it's children will be removed as well
    */
   delete(QuadTreeObject item, bool clean) {
-    
-    
     if( item.owner != null ) {
       if( item.owner == this ) {
         _remove( item );
@@ -401,7 +395,7 @@ class QuadTreeObject {
   int UUID;
   static int NEXT_UUID = 0;
   
-  QuadTreeObject( this.data ) : UUID=NEXT_UUID++;
+  QuadTreeObject( this.data ) : UUID = NEXT_UUID++;
 
   /// Clear memory for GC
   void dispose() {
@@ -411,7 +405,11 @@ class QuadTreeObject {
 }
 
 /// Implement this interface to be able to place it into the [QuadTree]
-abstract class IQuadStorable {
+abstract class IQuadStorable implements ISpatial {
   bool isInRect( Rect r );
   bool intersectsRect( Rect r );
+}
+
+abstract class ISpatial {
+  Vec2 getPosition();
 }

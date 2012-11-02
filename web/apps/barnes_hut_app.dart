@@ -12,17 +12,15 @@ void main() {
   document.on.click.add(onMouseClick);
 
   bt = new geom.BarnesHutTree(0, 0, context.canvas.width, context.canvas.height, 1);
-  var rand = new Math.Random( new Date.now().millisecondsSinceEpoch );
+
+  bt = new geom.BarnesHutTree(0, 0, 1000, 1000);
+  var rand = new Math.Random( 1983 );
   SimpleObject so = null;
   for( int i = 0; i < 10; i++ ) {
-    so = new SimpleObject( rand.nextDouble() * context.canvas.width, rand.nextDouble() * context.canvas.height );
+    so = new SimpleObject( rand.nextDouble() * bt.quadRect.width, rand.nextDouble() * bt.quadRect.height );
     bt.add( so );
   }
-  
-  
-  print(so.hashCode());
-  bt.remove( so );
-
+ 
   start();
 }
 
@@ -94,6 +92,7 @@ class SimpleObject extends geom.IBarnesHutStorable {
 
   bool isInRect( geom.Rect r ) => position.isInRect(r);
   bool intersectsRect( geom.Rect r ) => position.intersectsRect(r);
+  geom.Vec2 getPosition() => position;
 }
 
 

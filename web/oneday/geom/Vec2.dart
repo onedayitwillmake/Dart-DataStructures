@@ -63,8 +63,16 @@ class Vec2 implements IQuadStorable {
   }
   
   Vec2 add( Vec2 other ) {
+    if( other == null ) return this;
+    
     this.x += other.x;
     this.y += other.y;
+    return this;
+  }
+  
+  Vec2 set( num pX, num pY ) {
+    x = pX;
+    y = pY;
     return this;
   }
 

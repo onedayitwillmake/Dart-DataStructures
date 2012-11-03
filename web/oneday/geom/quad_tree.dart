@@ -43,6 +43,12 @@ class QuadTree {
     return false;
   }
   
+  /// Updates the childes position in the quadtree
+  void updateChildPosition( IQuadStorable item ) {
+    QuadTreeObject wrappedObject = wrappedDictionary[item];
+    wrappedObject.owner.move( wrappedObject );
+  }
+  
   void getObjects( Rect searchRect, List< IQuadStorable > results ) => quadTreeRoot.getObjects( searchRect, results );
   
   /// Determins whether the [QuadTree] contains a specific value
@@ -327,7 +333,7 @@ class QuadTreeNode {
   void _assimilateNode( QuadTreeObject aNode ){}
 
   /// Moves the [QuadTreeObject] in the tree
-  void _move( QuadTreeObject item ) {
+  void move( QuadTreeObject item ) {
     if( item.owner != null ) {
       item.owner._relocate( item );
     } else {

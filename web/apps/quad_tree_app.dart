@@ -27,88 +27,29 @@ void main() {
   context = canvas.context2d;
   document.on.click.add(onMouseClick);
 
-//  geom.Rect r1 = new geom.Rect( 690.01, 607.72, 100, 100);
-//  geom.Rect r2 = new geom.Rect( 487.64, 285.51, 100, 100);
-//  
-//  geom.Rect TL = new geom.Rect(0,0,500,500);
-//  geom.Rect TR = new geom.Rect(500, 0, 500, 500);
-//  geom.Rect BL = new geom.Rect(0, 500, 500, 500);
-//  geom.Rect BR = new geom.Rect(500, 500, 500, 500);
-//  
-  //item.data.isInRect( childTL.rect )
-//  print( r1.isInRect(TL) );
-//  print( r1.isInRect(TR) );
-//  print( r1.isInRect(BL) );
-//  print( r1.isInRect(BR) );
-//  print(r2);
   
-  qt =  new geom.QuadTree(0,0, 1000,1000, 1);
-  int objectSize = 1;
-  
-  int startTime = new Date.now().millisecondsSinceEpoch;
-  qt.add( new SimpleObject( 690.01, 607.72, objectSize, objectSize) );
-  qt.add( new SimpleObject( 487.64, 285.51, objectSize, objectSize) );
-  print("Time: ${new Date.now().millisecondsSinceEpoch - startTime }");
-//  start();
-//  
-  start();
-  
-  
-//  rand = new Math.Random(1);
-  
-//  
-//  var s = new Date.now().millisecondsSinceEpoch;
-//  var e;
-//  print("S:${s}");
-//  List< SimpleObject > objs = new List< SimpleObject >();
-//  objs.add( new SimpleObject(50, 50, objectSize, objectSize) );
-//  objs.add( new SimpleObject(450, 450, objectSize, objectSize) );
-//  objs.add( new SimpleObject(501, 100, objectSize, objectSize) );
-//  
-//  objs.forEach( (e)=> qt.add(e) );
-//  
-  
-//  SimpleObject so;
-//  for( int i = 0; i < 2; i++ ) {
-//    so = new SimpleObject( rand.nextDouble() * qt.quadRect.width, rand.nextDouble() * qt.quadRect.height, objectSize, objectSize);
-//    print(so);
-//    qt.add( so );
-//  }
-//  
-//  print("Time: ${new Date.now().millisecondsSinceEpoch - s }");
-  
+  qt =  new geom.QuadTree(0, 0, context.canvas.width, context.canvas.height, 1);
+  int objectSize = 10;
 
+  rand = new Math.Random(1983);
+  for( int i = 0; i < 2; i++ ) {
+    SimpleObject so = new SimpleObject( rand.nextDouble() * qt.quadRect.width, rand.nextDouble() * qt.quadRect.height, objectSize, objectSize);
+    qt.add( so );
+  }
 
-//  
-//  List< SimpleObject > results = new List< SimpleObject>();
-//  qt.getObjects( new geom.Rect(0,0, 51, 51), results );
-//  print( results );
-//  
-//
-//  qt = new geom.QuadTree(0, 0, context.canvas.width, context.canvas.height, 1);
-//  var rand = new Math.Random( new Date.now().millisecondsSinceEpoch );
-//  for( int i = 0; i < 100; i++ ) {
-//    var so = new SimpleObject( rand.nextDouble() * context.canvas.width, rand.nextDouble() * context.canvas.height );
-//    qt.add( so );
-//  }
-//  
-
+  initRenderLoop();
 }
 
-void start() {
+void initRenderLoop() {
   lastTime = new Date.now().millisecondsSinceEpoch;
   window.requestAnimationFrame( update );
 }
 
 
-int i = 0;
 void update( int time ) {
   var delta = (time-lastTime)/1000;
   lastTime = time;
 
-//  forceGraph.tick( delta );
-
-//  if( i++ % 60 == 0 )
   draw( delta );
   window.requestAnimationFrame( update );
 }
@@ -120,12 +61,10 @@ void draw( num delta ) {
   context.strokeStyle = "";
   context.lineWidth = 0;
 
-//  print(qt.wrappedDictionary.length);
   context.beginPath();
   qt.wrappedDictionary.forEach(void f( geom.IQuadStorable key, value){
     SimpleObject so = key as SimpleObject;
     context.moveTo( so._rect.x+5, so._rect.y );
-    //context.arc( so.r.x, so.r.y, 5, 0, 360, false);
     context.rect( so._rect.x, so._rect.y, so._rect.width, so._rect.height );
   });
 
